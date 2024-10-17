@@ -21,7 +21,7 @@ def client_handler(conn, addr):
     mode = handle_message(conn)['mode']
 
     if mode == 1:
-        # Mode joueur contre serveur
+        # Mode joueur contre serveur (inchangé)
         game = HangmanGame()
         send_message(conn, game.get_game_state())
         while not game.is_game_over():
@@ -39,57 +39,68 @@ def client_handler(conn, addr):
 
     elif mode == 2:
         # Mode joueur contre joueur
-        # Cherche une salle avec un joueur déjà présent
+        # Chercher une salle avec un joueur déjà présent
         game_id = None
         for gid, game_data in games.items():
-            if len(game_data['players']) == 1:  # Si une salle a déjà un joueur
+            if len(game_data['players']) < 4:  # Limiter à 4 joueurs ou plus selon les besoins
                 game_id = gid
                 break
 
         # Si aucune salle n'existe ou si elles sont toutes pleines, créer une nouvelle salle
         if game_id is None:
             game_id = f"game_{len(games) + 1}"
-            games[game_id] = {'game': HangmanGame(), 'players': [conn]}
-            send_message(conn, {'message': 'En attente d\'un autre joueur pour commencer...'})
+            games[game_id] = {'game': HangmanGame(), 'players': [conn], 'current_turn': 0}
+            send_message(conn, {'message': 'En attente d\'autres joueurs pour commencer...'})
             print(f"Le client {addr} a été assigné à la nouvelle salle {game_id}.")
         else:
-            # Si une salle incomplète a été trouvée, ajouter le joueur
             games[game_id]['players'].append(conn)
             print(f"Le client {addr} a rejoint la salle {game_id}.")
-        
-        #Voir ici plus haut pour limiter a 2 ? 
-        
+
         clients_in_game[conn] = game_id
 
-        # NE COMMENCE PAS LA PARTIE AVANT QUE 2 JOUEURS SOIENT PRÉSENTS
+        # NE COMMENCE PAS LA PARTIE AVANT QUE 2 JOUEURS OU PLUS SOIENT PRÉSENTS
         if len(games[game_id]['players']) < 2:
-        # Ne fais rien d'autre, attends que le deuxième joueur rejoigne
             return
         
-            # Une fois que la salle est complète (2 joueurs)
-        if len(games[game_id]['players']) == 2:
+        # Démarrer la partie une fois que 2 joueurs ou plus sont présents
+        if len(games[game_id]['players']) >= 2:
             broadcast_to_players(game_id, {'message': 'Le jeu commence !'})
             #broadcast_to_players(game_id, games[game_id]['game'].get_game_state())
             
-            # Démarrer la boucle du jeu une fois que les 2 joueurs sont présents
+            # Démarrer la boucle du jeu avec gestion des tours
             while not games[game_id]['game'].is_game_over():
                 try:
                     # Tour de chaque joueur
+                    current_player_index = games[game_id]['current_turn']
+                    current_player = games[game_id]['players'][current_player_index]
+
+                    # Informer tous les joueurs que ce n'est pas leur tour
                     for player in games[game_id]['players']:
-                        send_message(player, {'message': 'C\'est votre tour !'})
-                        send_message(player, games[game_id]['game'].get_game_state())
-                        message = handle_message(player)
-                        if message['action'] == 'guess':
-                            games[game_id]['game'].guess_letter(message['letter'])
-                            broadcast_to_players(game_id, games[game_id]['game'].get_game_state())
-                        elif message['action'] == 'quit':
-                            print(f"Le client {addr} a quitté la partie.")
-                            break
+                        if player != current_player:
+                            send_message(player, {'message': 'Ce n\'est pas ton tour, attends ton tour.'})
+
+                    # Envoyer un message uniquement au joueur dont c'est le tour
+                    send_message(current_player, {'message': 'C\'est votre tour !'})
+                    send_message(current_player, games[game_id]['game'].get_game_state())
+
+                    # Recevoir et traiter le message du joueur actuel
+                    message = handle_message(current_player)
+                    if message['action'] == 'guess':
+                        games[game_id]['game'].guess_letter(message['letter'])
+                        #broadcast_to_players(game_id, games[game_id]['game'].get_game_state())
+                    elif message['action'] == 'quit':
+                        print(f"Le client {addr} a quitté la partie.")
+                        break
+
+                    # Passer au joueur suivant
+                    games[game_id]['current_turn'] = (current_player_index + 1) % len(games[game_id]['players'])
+
                 except ConnectionResetError:
                     print(f"Le client {addr} s'est déconnecté.")
                     break
 
     conn.close()
+
 
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

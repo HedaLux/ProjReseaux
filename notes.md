@@ -2,7 +2,6 @@
 Quand on a perdu -> révéler le mot
 
 # notes
-adresse host differente si plusieurs clients distants ou meme machine ? 
 
 
 # Suggestions
@@ -11,3 +10,7 @@ choix de la langue ? (fr/eng)
 système de connection comme dans énoncé (UDP) (ip possible, compte preferable ?)
 interface graphique ? 
 ajouter BDD au serveur pour retenir pseudos ? scores, parties ?
+
+--
+multi: la victoire pose défaite (ou fin de partie en général)
+Garder le tour quand on a juste
