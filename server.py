@@ -98,6 +98,9 @@ def client_handler(conn, addr):
                 except ConnectionResetError:
                     print(f"Le client {addr} s'est déconnecté.")
                     break
+            
+        broadcast_to_players(game_id, {'message': 'Le jeu est fini !!!!!!!, la connection va s\'arreter'})
+
 
     conn.close()
 
