@@ -13,3 +13,4 @@ def handle_message(conn):
         if '\n' in buffer:  # Si un saut de ligne est trouvé, le message est complet
             message, buffer = buffer.split('\n', 1)  # Sépare le message complet du reste du buffer
             return json.loads(message)  # Retourne le message décodé
+        

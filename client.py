@@ -4,8 +4,6 @@ from utils import handle_message, send_message
 HOST = '127.0.0.1' #'192.168.43.40'
 PORT = 65432
 
-#ajoutez sleep pour que ça marche, réglez ça
-
 def start_client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((HOST, PORT))
