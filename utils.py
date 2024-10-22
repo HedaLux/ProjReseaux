@@ -6,7 +6,7 @@ def send_message(conn, message):
 def handle_message(conn):
     buffer = ''
     while True:
-        data = conn.recv(1024).decode()  # Reçoit les données
+        data = conn.recv(1).decode()  # Reçoit les données
         if not data:
             raise ConnectionResetError("La connexion a été interrompue")
         buffer += data
