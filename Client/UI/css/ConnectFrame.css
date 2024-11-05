@@ -1,0 +1,137 @@
+@font-face {
+    font-family: Lato;
+    src: url(/assets/Lato-Regular.ttf);
+}
+
+@font-face {
+    font-family: Itim;
+    src: url(/assets/Itim-Regular.ttf);
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#background-vid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.centered-wrapper {
+    background-color:rgba(100,100,100,0.2);
+    backdrop-filter:blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:fit-content;
+    min-width: 300px;
+    border-radius: 20px;
+}
+
+.centered-wrapper > .wrapper-title {
+    padding: 0;
+    margin:0;
+    font-family:"Itim", sans-serif;
+    background-color: #333;
+    color: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 10px 0 10px 0;
+    width: 100%;
+    text-align:center;
+}
+
+.centered-wrapper > .wrapper-controls {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    justify-content: center;
+}
+
+.centered-wrapper > .wrapper-controls > * {
+    background-color: white;
+    width: 50%;
+    padding: 10px 0 10px 0;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.centered-wrapper > .wrapper-controls > *:hover {
+    filter: brightness(80%);
+}
+
+.centered-wrapper > .wrapper-controls > .checked {
+    
+    background-color: green;
+    color: white;
+}
+
+.centered-wrapper > .wrapper-content{
+    margin-top: 20px;
+    padding: 0 25px 25px 25px;
+}
+
+.centered-wrapper > .wrapper-content > form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.centered-wrapper > .wrapper-content > form input[type="submit"] {
+    margin: auto;
+    margin-top: 10px;
+    width: fit-content;
+    padding: 5px 10px;
+}
+
+.centered-wrapper > .wrapper-content > form .form-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.centered-wrapper > .wrapper-content > form .sep {
+    background-color: rgba(0,0,0,0.2);
+    height: 1px;
+    margin: 5px 0;
+}
+
+.centered-wrapper > .wrapper-content > form .form-input.ip-input > .ip-inputs input {
+    width: 30px;
+    text-align: center;
+}
+
+.centered-wrapper > .wrapper-content > form .form-input.ip-input > label,
+.centered-wrapper > .wrapper-content > form .form-input.port-input > label
+{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.centered-wrapper > .wrapper-content > form .form-input > input[name="server-port"] {
+    width: 45px;
+    text-align: center;
+}
+
+.centered-wrapper > .wrapper-content > form .horiz-form-inputs {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+    gap: 10px;
+}
+
+.hidden {
+    display: none !important;
+}

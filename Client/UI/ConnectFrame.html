@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="css/ConnectFrame.css">
+        <script type="text/javascript" src="/eel.js"></script>
+    </head>
+    <body>
+        <video autoplay muted loop id="background-vid">
+            <source src="assets/bg-vid.mp4" type="video/mp4">
+        </video>
+        
+        <div class="centered-wrapper">
+            <h1 class="wrapper-title">Le jeu du pendu</h1>
+            <div class="wrapper-controls">
+                <div id="connect-btn" class="checked">Connexion</div>
+                <div id="register-btn">Inscription</div>
+            </div>
+            <div class="wrapper-content">
+                
+                <!-- FORMULAIRE DE CONNEXION -->
+                <form name="connect-form" id="connect-form">
+                    <div class="form-input">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input name="username" type="Text"/>
+                    </div>
+                    <div class="form-input"> 
+                        <label for="password">Mot de passe</label>
+                        <input name="password" type="password"/>
+                    </div>
+                    <!-- Server Infos -->
+                    <div class="sep"></div>
+                    <div class="horiz-form-inputs">
+                        <div class="form-input ip-input">
+                            <label for="server-ip">Ip du serveur</label>
+                            <div class="ip-inputs">
+                                <input type="hidden" name="server-ip" value="127.0.0.1" />
+                                <input type="Text" value="127" maxlength="3"/>
+                                <span>.</span>
+                                <input type="Text" value="0" maxlength="3"/>
+                                <span>.</span>
+                                <input type="Text" value="0" maxlength="3"/>
+                                <span>.</span>
+                                <input type="Text" value="1" maxlength="3"/>
+                            </div>
+                        </div>
+                        <div class="form-input port-input">
+                            <label for="server-port">Port</label>
+                            <input name="server-port" type="Text" value="12345" maxlength="6"/>
+                        </div>
+                    </div>
+                    <input type="submit" value="Se connecter"/>
+                </form>
+                
+                <!-- FORMULAIRE D'INSCRIPTION -->
+                <form name="register-form" id="register-form" class="hidden">
+                    <div class="form-input">
+                        <label for="username">Nom d'utilisateur register</label>
+                        <input name="username" type="Text"/>
+                    </div>
+                    <div class="form-input"> 
+                        <label for="password">Mot de passe</label>
+                        <input name="password" type="password"/>
+                    </div>
+                    <div class="form-input"> 
+                        <label for="password-confirm">Confirmer le mot de passe</label>
+                        <input name="password-confirm" type="password"/>
+                    </div>
+                    <!-- Server Infos -->
+                    <div class="sep"></div>
+                    <div class="horiz-form-inputs">
+                        <div class="form-input ip-input">
+                            <label for="server-ip">Ip du serveur</label>
+                            <div class="ip-inputs">
+                                <input type="hidden" name="server-ip" value="127.0.0.1" />
+                                <input class="inscr" type="Text" value="127" maxlength="3"/>
+                                <span>.</span>
+                                <input class="inscr" type="Text" value="0" maxlength="3"/>
+                                <span>.</span>
+                                <input class="inscr" type="Text" value="0" maxlength="3"/>
+                                <span>.</span>
+                                <input class="inscr" type="Text" value="1" maxlength="3"/>
+                            </div>
+                        </div>
+                        <div class="form-input port-input">
+                            <label for="server-port">Port</label>
+                            <input name="server-port" type="Text" value="12345" maxlength="6"/>
+                        </div>
+                    </div>
+                    <input type="submit" value="Se connecter"/>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script src="scripts/ConnectFrame.js" defer></script>
+
+<!-- Interface with python -->
+<script>
+    document.forms['connect-form'].addEventListener("submit", e => {
+        e.preventDefault()
+        
+        const form = e.target.elements
+
+        console.log(form)
+        console.log(form['username'].value)
+
+        const username = form['username'].value
+        const password = form['password'].value
+        const serverAddress = form['server-ip'].value
+        const serverPort = form['server-port'].value
+
+        eel.connect_to_server(username, password, serverAddress, serverPort)
+    })
+
+    document.forms['register-form'].addEventListener("submit", e => {
+        e.preventDefault()
+        
+        const form = e.target.elements
+
+        const username = form['username'].value
+        const password = form['password'].value
+        const passwordConfirm = form['password-confirm'].value
+        const serverAddress = form['server-ip'].value
+        const serverPort = form['server-port'].value
+
+        eel.register_on_server(username, password, passwordConfirm, serverAddress, serverPort)
+    })
+</script>
