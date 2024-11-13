@@ -4,16 +4,17 @@ import json
 import socket
 
 TOKEN_PATH = "token.json"
+UDPSOCK = None
 
 def startGUI():
-    token = get_token()
+    tokenData = load_token()
 
     eel.init("Client/UI")
 
-    if(token == False):
+    if(tokenData == False):
         eel.start("ConnectFrame.html")
     else:
-        response = try_to_reconnect(token)
+        response = try_to_reconnect(tokenData)
         if(response["status"] == "inGame"):
             #TODO init TCP socket and get game data
             eel.start("Game.html")
@@ -21,29 +22,59 @@ def startGUI():
             return
         if(response["status"] == "inMenu"):
             #TODO init TCP socket and get server list
-            eel.start("MainMenu.html")
+            eel.start("RoomBrowser.html")
             #TODO call JS func to send server list to GUI
             return
         eel.start("ConnectFrame.html")
         #TODO delete the token file
 
-def try_to_reconnect(token):
-    pass
+def try_to_reconnect(tokenData):
+    initUDPSocket()
+    
+    tokenData = load_token
+    token = tokenData["token"]
+    server_address = tokenData["servAddr"]
+    server_port = tokenData["port"]
 
-def get_token():
+    query = {
+        "type" : "reconnect",
+        "data" : {
+            "token" : token
+        }
+    }
+
+    query_str = json.dumps(query)
+
+    UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
+    print(f"message : {query} sent to {(server_address, int(server_port))}")
+    responseRaw = UDPSOCK.recv(1024).decode()
+    return json.loads(responseRaw)
+
+def load_token():
     if(osp.isfile(TOKEN_PATH)):
         with open(TOKEN_PATH, 'r+', encoding='UTF-8') as file:
-            data = json.load(file)
-            return data["token"]
+            data = json.loads(file)
+            return data
     return False
 
+def save_token(token, servAddr, port):
+    print(f"token = {token}")
+    
+    with open(TOKEN_PATH, 'w+', encoding='UTF-8') as file:
+        dataJson = {"token": token, "servAddr": servAddr, "port": int(port)}
+        
+        json.dump(dataJson, file, indent=4)
+
 def initUDPSocket():
-    UDP_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return UDP_socket
+    global UDPSOCK
+    if UDPSOCK == None:
+       UDPSOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 @eel.expose()
 def connect_to_server(username, password, server_address, server_port):
-    UDP_socket = initUDPSocket()
+    global UDPSOCK
+
+    initUDPSocket()
 
     query = {
         "type" : "login",
@@ -53,11 +84,15 @@ def connect_to_server(username, password, server_address, server_port):
         }
     }
     
-    queryToString = json.dumps(query) + "\n"
+    query_str = json.dumps(query) + "\n"
 
-    UDP_socket.sendto(queryToString.encode(), (server_address, int(server_port)))
+    UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
     print(f"message : {query} sent to {(server_address, int(server_port))}")
-    responseRaw = UDP_socket.recv(1024).decode()
+    responseRaw = UDPSOCK.recv(1024).decode()
+    response = json.loads(responseRaw)
+
+    print(f"reponse['message'] = {response["message"]}")
+    save_token(response["message"], server_address, server_port)
 
     return json.loads(responseRaw)
     
