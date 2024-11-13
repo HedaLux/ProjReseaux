@@ -46,20 +46,29 @@ class LoginQuery(QueryHandler):
 
         utils.send_message_to(sock, client_address, "success", token)
         
-# Maillon d'insciption      
+# Maillon d'inscription
 class RegisterQuery(QueryHandler):
     def handle(self, sock, query, client_address):
         if(query["type"] != "register"):
             self._try_next(sock, query, client_address)
             return
         
-            
+        if not check_username_disponibility(query["data"]["username"]):
+            pass#TODO envoyer une erreur
+
+        add_user(query["data"]["username"], query["data"]["password"])
+        
+        #TODO Ajouter l'utilisateur dans la classe singleton Users
+        #TODO Envoyer la réponse de succès
+        
 # Maillon de déconnexion
 class LogoutQuery(QueryHandler):
     def handle(self, sock, query, client_address):
         if(query["type"] != "logout"):
             self._try_next(sock, query, client_address)
             return
+        
+        #TODO supprimer l'utilisateur dans la classe singleton Users
 
 # Maillon de reconnexion     
 class ReconnectQuery(QueryHandler):
@@ -67,8 +76,32 @@ class ReconnectQuery(QueryHandler):
         if(query["type"] != "reconnect"):
             self._try_next(sock, query, client_address)
             return
+        
+        #TODO vérifier que le token est présent dans la classe singleton Users
+        #TODO si non envoyer la réponse d'erreur
+        #TODO si oui reconnecter l'utilisateur avec la classe singleton Users
+        #TODO si oui envoyer la réponse de succès
 
+# Maillon de récupération des salles
+class GetRoomsQuery(QueryHandler):
+    def handle(self, sock, query, client_address):
+        if(query["type"] != "getrooms"):
+            self._try_next(sock, query, client_address)
+            return
 
+# Maillon de création de salles
+class CreateRoomQuery(QueryHandler):
+    def handle(self, sock, query, client_address):
+        if(query["type"] != "createrooms"):
+            self._try_next(sock, query, client_address)
+            return
+
+# Maillon de connexion à une salles
+class JoinRoomQuery(QueryHandler):
+    def handle(self, sock, query, client_address):
+        if(query["type"] != "joinroom"):
+            self._try_next(sock, query, client_address)
+            return
 
 # Classe singleton qui permet de construire une seule fois la chaine de responsabilité
 class CORUDPQueriesWrapper():
