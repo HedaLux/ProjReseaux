@@ -20,11 +20,17 @@ class Users:
 
     def __new__(cls, *args, **kwargs):
         # Si l'instance n'existe pas encore, on en crée une
-        if cls._instance is None:
-            cls._instance = super(Users, cls).__new__(cls)
+        if cls.__instance is None:
+            cls.__instance = super(Users, cls).__new__(cls)
         else:
             raise Exception("Impossible de créer une nouvelle instance de MaClasse")
-        return cls._instance
+        return cls.__instance
+
+    @classmethod
+    def get_instance(cls):
+        if cls.__instance is None:
+            cls.__instance = Users()
+        return cls.__instance
 
     def __token_cleanup(self):
         while(True):

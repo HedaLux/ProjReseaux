@@ -57,6 +57,9 @@ def connect_to_server(username, password, server_address, server_port):
 
     UDP_socket.sendto(queryToString.encode(), (server_address, int(server_port)))
     print(f"message : {query} sent to {(server_address, int(server_port))}")
+    responseRaw = UDP_socket.recv(1024).decode()
+
+    return json.loads(responseRaw)
     
 
 @eel.expose()

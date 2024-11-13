@@ -3,7 +3,7 @@ import socket
 import threading
 import secrets
 import utils
-from UsersManager import check_user_credentials, check_username_disponibility, add_user
+from UsersManager import *
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
@@ -33,10 +33,18 @@ class LoginQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
 
-        if not check_user_credentials(query["data"]["username"], query["data"]["password"]):
+        username = query["data"]["username"]
+        password = query["data"]["password"]
+
+        if not check_user_credentials(username, password):
             print(f"erreur la combinaison n'est pas dans la basse de données")
-            #utils.send_error_message_to(sock, client_address, "nom d'utilisateur ou mot de passe incorrect")
+            utils.send_message_to(sock, client_address, "error", "nom d'utilisateur ou mot de passe incorrect")
             return
+        
+        Users.get_instance().connect_user(username)
+        token = Users.get_instance().get_user_token(username)
+
+        utils.send_message_to(sock, client_address, "success", token)
         
 # Maillon d'insciption      
 class RegisterQuery(QueryHandler):
