@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="css/RoomBrowser.css">
+    <script type="text/javascript" src="/eel.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0" />
+</head>
+
+<body>
+    <video autoplay muted loop id="background-vid">
+        <source src="assets/bg-vid.mp4" type="video/mp4">
+    </video>
+
+    <div class="main-wrapper">
+        <h1 class="wrapper-title">Le jeu du pendu</h1>
+
+        <div class="wrapper-content">
+            <div class="server-browser-wrapper">
+                <button class="refresh-button material-symbols-outlined">refresh</button>
+
+                <h1 class="title">Listes des salles</h1>
+
+                <div class="server-browser">
+                    <div class="head-info">
+                        <div>accès</div>
+                        <div>nom de la salle</div>
+                        <div>créateur</div>
+                        <div>nombre de joueurs</div>
+                        <div>nombre de rounds</div>
+                        <div>status</div>
+                    </div>
+                    <div class="data">
+                        <div class="room" rid="1324">
+                            <div>publique</div>
+                            <div>salle de test</div>
+                            <div>Aurélien</div>
+                            <div>0/10</div>
+                            <div>20</div>
+                            <div>en attente de joueurs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-controls">
+                    <div class="no-rooms-wrapper">
+                        <span class="no-rooms">0</span> salle(s) trouvée(s)
+                    </div>
+
+                    <button id="create-room">
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+                        créer une salle
+                    </button>
+
+                    <button id="join-game" class="join hidden">
+                        <span class="material-symbols-outlined">
+                            login
+                        </span>
+                        rejoindre
+                    </button>
+                </div>
+            </div>
+
+            <div class="player-info">
+                <h1 class="greetings">Bienvenue <span>{playername}</span></h1>
+                <h2 class="stats-label">Vos statistiques :</h2>
+                <ul class="stats">
+                    <li>Parties joueés : <span class="game-played">0</span></li>
+                    <li>Victoires : <span class="game-played">0</span></li>
+                    <li>Défaites : <span class="game-played">0</span></li>
+                    <li>Ratio : <span class="game-played">0</span></li>
+                </ul>
+                <button class="logout-button">se déconnecter</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-create-room" class="modal-wrapper hidden">
+        <div class="modal">
+            <h1 class="title">Créer une salle</h1>
+            <form name="create-room" class="content">
+                <div class="form-input">
+                    <label for="roomname">Nom de la salle</label>
+                    <input name="roomname" type="Text" />
+                </div>
+                <div class="form-input">
+                    <label for="gamemode">Type de partie</label>
+                    <div class="horiz-form-input">
+                        <div class="form-input radio">
+                            <input name="gamemode" type="Radio" value="multiplayer" checked />
+                            <label for="gamemode">Multijoueur</label>
+                        </div>
+                        <div class="form-input radio">
+                            <input name="gamemode" type="Radio" value="solo" />
+                            <label for="gamemode">Solo</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-input" id="player-count-wrapper">
+                    <label for="player-count">Nombre maximum de joueurs : <span id="player-count-info">5</span></label>
+                    <input name="player-count" type="Range" min="2" max="20" step="1" value="5" />
+                </div>
+
+                <div class="form-input">
+                    <label for="round-count">Nombre de rounds : <span id="round-count">10</span></label>
+                    <input name="round-count" type="Range" min="1" max="20" step="1" value="5" />
+                </div>
+
+                <div class="form-input">
+                    <label for="round-time">Temps d'un round (en minutes) : <span id="round-time">12</span></label>
+                    <input name="round-time" type="Range" min="4" max="20" step="1" value="12" />
+                </div>
+
+                <div class="form-input">
+                    <label for="round-cooldown">Temps entre les rounds (en secondes) : <span id="round-cooldown">10</span></label>
+                    <input name="round-cooldown" type="Range" min="5" max="30" step="1" value="10" />
+                </div>
+
+                <input type="submit" value="Créer la salle" />
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script src="scripts/RoomBrowser.js" defer></script>
+
+<!-- Interface with python -->
+<script>
+
+</script>
