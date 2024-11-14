@@ -94,7 +94,6 @@ class ReconnectQuery(QueryHandler):
             utils.send_message_to(sock, client_address, "error", "le token est dépassé ou incorrect")
             return
         
-
         utils.send_message_to(sock, client_address, "success", "inMenu") #TODO c'est temporaire il faut vérifier l'état dans lequel est l'utilisateur
             
 
