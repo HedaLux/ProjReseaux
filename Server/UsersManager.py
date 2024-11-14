@@ -4,7 +4,7 @@ import secrets
 import threading
 import time
 
-DB_FILENAME = 'Server/users.json'
+DB_FILENAME = 'users.json'
 SALT = "7}3!=.qlTkUe"
 
 class Users:

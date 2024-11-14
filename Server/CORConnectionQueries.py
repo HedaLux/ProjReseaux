@@ -34,6 +34,16 @@ class LoginQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
 
+        if("data" not in query):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+        if("username" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+        if("password" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+        
         username = query["data"]["username"]
         password = query["data"]["password"]
 
@@ -55,13 +65,39 @@ class RegisterQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
         
-        if not check_username_disponibility(query["data"]["username"]):
-            pass#TODO envoyer une erreur
+        if("data" not in query):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+        if("username" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect (nom d'utilisateur manquant)")
+            return
+        if("password" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect (mot de passe manquant)")
+            return
+        if("passwordConfirm" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect (confirmation du mot de passe)")
+            return
+
+        username = query["data"]["username"]
+        password = query["data"]["password"]
+        password_confirm = query["data"]["passwordConfirm"]
+
+
+        if not check_username_disponibility(username):
+            utils.send_message_to(sock, client_address, "error", "le nom d'utilisateur est déjà utilisé")
+            return
+
+        if not password == password_confirm:
+            utils.send_message_to(sock, client_address, "error", "les 2 champs mot de passe ne correspondent pas")
+            return
+
 
         add_user(query["data"]["username"], query["data"]["password"])
         
-        #TODO Ajouter l'utilisateur dans la classe singleton Users
-        #TODO Envoyer la réponse de succès
+        Users.get_instance().connect_user(username)
+        token = Users.get_instance().get_user_token(username)
+
+        utils.send_message_to(sock, client_address, "success", token)
 
 
 # Maillon de déconnexion
@@ -95,8 +131,6 @@ class ReconnectQuery(QueryHandler):
             return
         
         utils.send_message_to(sock, client_address, "success", "inMenu") #TODO c'est temporaire il faut vérifier l'état dans lequel est l'utilisateur
-            
-
 
         #TODO vérifier que le token est présent dans la classe singleton Users
         #TODO si non envoyer la réponse d'erreur

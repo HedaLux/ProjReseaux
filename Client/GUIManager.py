@@ -28,6 +28,7 @@ def startGUI():
         print(f"{response["message"]}")
         os.remove(TOKEN_PATH) # on delete le token dépassé
         eel.start("ConnectFrame.html")
+        eel.notify_token_failure(response["message"])
         
 
 def try_to_reconnect(tokenData):
@@ -96,19 +97,41 @@ def connect_to_server(username, password, server_address, server_port):
         }
     }
     
-    query_str = json.dumps(query) + "\n"
+    query_str = json.dumps(query) + '\n'
 
     UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
     print(f"message : {query} sent to {(server_address, int(server_port))}")
-    responseRaw = UDPSOCK.recv(1024).decode()
-    response = json.loads(responseRaw)
+    response_raw = UDPSOCK.recv(1024).decode()
+    response = json.loads(response_raw)
 
     print(f"reponse['message'] = {response["message"]}")
     save_token(response["message"], server_address, server_port)
 
-    return json.loads(responseRaw)
+    return json.loads(response_raw)
     
 
 @eel.expose()
 def register_on_server(username, password, password_confirm, server_address, server_port:int):
-    pass
+    global UDPSOCK
+
+    initUDPSocket()
+
+    query = {
+        "type" : "register",
+        "data" : {
+            "username" : username,
+            "password" : password,
+            "passwordConfirm" : password_confirm
+        }
+    }
+    
+    query_str = json.dumps(query) + '\n'
+
+    UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
+
+    response_raw = UDPSOCK.recv(1024).decode()
+    response = json.loads(response_raw)
+
+    save_token(response["message"], server_address, server_port)
+
+    return json.loads(response_raw)
