@@ -1,5 +1,6 @@
 @echo off
 
-py Client/Client.py
+cd Client
+py Client.py
 
 pause

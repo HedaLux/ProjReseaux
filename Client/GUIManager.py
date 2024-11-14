@@ -9,7 +9,7 @@ UDPSOCK = None
 def startGUI():
     tokenData = load_token()
 
-    eel.init("Client/UI")
+    eel.init("UI")
 
     if(tokenData == False):
         eel.start("ConnectFrame.html")

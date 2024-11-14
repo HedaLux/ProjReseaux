@@ -1,5 +1,6 @@
 @echo off
 
-py Server/Server.py
+cd Server
+py Server.py
 
 pause
