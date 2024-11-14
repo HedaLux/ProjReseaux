@@ -25,7 +25,7 @@ def startGUI():
             eel.start("RoomBrowser.html")
             #TODO call JS func to send server list to GUI
             return
-        print(f"{response["message"]}")
+        print(f'{response["message"]}')
         os.remove(TOKEN_PATH) # on delete le token dépassé
         eel.start("ConnectFrame.html")
         eel.notify_token_failure(response["message"])
@@ -104,7 +104,7 @@ def connect_to_server(username, password, server_address, server_port):
     response_raw = UDPSOCK.recv(1024).decode()
     response = json.loads(response_raw)
 
-    print(f"reponse['message'] = {response["message"]}")
+    print(f"reponse['message'] = {response['message']}")
     save_token(response["message"], server_address, server_port)
 
     return json.loads(response_raw)
