@@ -70,6 +70,12 @@ class Users:
 
     def get_user_token(self, username):
         return self.__connected_users[username]["token"]
+    
+    def is_token_valid(self, token):
+        for user in self.__disconnected_users:
+            if(user["token"] == token):
+                return True
+        return False
 
 def read_json(filename):
     with open(filename, 'r+', encoding='UTF-8') as file:

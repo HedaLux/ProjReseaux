@@ -15,16 +15,17 @@ def startGUI():
         eel.start("ConnectFrame.html")
     else:
         response = try_to_reconnect(tokenData)
-        if(response["status"] == "inGame"):
+        if(response["message"] == "inGame"):
             #TODO init TCP socket and get game data
             eel.start("Game.html")
             #TODO call JS func to send game data to GUI
             return
-        if(response["status"] == "inMenu"):
+        if(response["message"] == "inMenu"):
             #TODO init TCP socket and get server list
             eel.start("RoomBrowser.html")
             #TODO call JS func to send server list to GUI
             return
+        print(f"{response["message"]}")
         os.remove(TOKEN_PATH) # on delete le token dépassé
         eel.start("ConnectFrame.html")
         
@@ -32,7 +33,7 @@ def startGUI():
 def try_to_reconnect(tokenData):
     initUDPSocket()
     
-    tokenData = load_token
+    tokenData = load_token()
     token = tokenData["token"]
     server_address = tokenData["servAddr"]
     server_port = tokenData["port"]
@@ -53,9 +54,9 @@ def try_to_reconnect(tokenData):
 
 
 def load_token():
-    if(os.isfile(TOKEN_PATH)):
-        with open(TOKEN_PATH, 'r+', encoding='UTF-8') as file:
-            data = json.loads(file)
+    if(os.path.exists(TOKEN_PATH)):
+        with open(TOKEN_PATH, 'r', encoding='UTF-8') as file:
+            data = json.load(file)
             if("token", "servAdrr", "port" in data):
                 return data
             else:
@@ -67,7 +68,9 @@ def load_token():
 def save_token(token, servAddr, port):
     print(f"token = {token}")
     
-    with open(TOKEN_PATH, 'w+', encoding='UTF-8') as file:
+
+
+    with open(TOKEN_PATH, 'w', encoding='UTF-8') as file:
         dataJson = {"token": token, "servAddr": servAddr, "port": int(port)}
         
         json.dump(dataJson, file, indent=4)

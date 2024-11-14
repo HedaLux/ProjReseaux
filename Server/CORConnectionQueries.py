@@ -11,6 +11,7 @@ class NoHandlerException(Exception):
         self.message = message
         super().__init__(self.message)
 
+
 # Classe abstraite qui représente un maillon de la COR
 class QueryHandler(ABC):
     def __init__(self, successor=None):
@@ -45,7 +46,8 @@ class LoginQuery(QueryHandler):
         token = Users.get_instance().get_user_token(username)
 
         utils.send_message_to(sock, client_address, "success", token)
-        
+
+      
 # Maillon d'inscription
 class RegisterQuery(QueryHandler):
     def handle(self, sock, query, client_address):
@@ -60,7 +62,8 @@ class RegisterQuery(QueryHandler):
         
         #TODO Ajouter l'utilisateur dans la classe singleton Users
         #TODO Envoyer la réponse de succès
-        
+
+
 # Maillon de déconnexion
 class LogoutQuery(QueryHandler):
     def handle(self, sock, query, client_address):
@@ -70,6 +73,7 @@ class LogoutQuery(QueryHandler):
         
         #TODO supprimer l'utilisateur dans la classe singleton Users
 
+
 # Maillon de reconnexion     
 class ReconnectQuery(QueryHandler):
     def handle(self, sock, query, client_address):
@@ -77,10 +81,29 @@ class ReconnectQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
         
+        if("data" not in query):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+        if("token" not in query["data"]):
+            utils.send_message_to(sock, client_address, "error", "la requête fournit est incorrect")
+            return
+
+        token = query["data"]["token"]
+        
+        if not Users.get_instance().is_token_valid(token):
+            utils.send_message_to(sock, client_address, "error", "le token est dépassé ou incorrect")
+            return
+        
+
+        utils.send_message_to(sock, client_address, "success", "inMenu") #TODO c'est temporaire il faut vérifier l'état dans lequel est l'utilisateur
+            
+
+
         #TODO vérifier que le token est présent dans la classe singleton Users
         #TODO si non envoyer la réponse d'erreur
         #TODO si oui reconnecter l'utilisateur avec la classe singleton Users
         #TODO si oui envoyer la réponse de succès
+
 
 # Maillon de récupération des salles
 class GetRoomsQuery(QueryHandler):
@@ -89,12 +112,14 @@ class GetRoomsQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
 
+
 # Maillon de création de salles
 class CreateRoomQuery(QueryHandler):
     def handle(self, sock, query, client_address):
         if(query["type"] != "createrooms"):
             self._try_next(sock, query, client_address)
             return
+
 
 # Maillon de connexion à une salles
 class JoinRoomQuery(QueryHandler):
@@ -103,16 +128,17 @@ class JoinRoomQuery(QueryHandler):
             self._try_next(sock, query, client_address)
             return
 
+
 # Classe singleton qui permet de construire une seule fois la chaine de responsabilité
 class CORUDPQueriesWrapper():
-    _instance = None
+    __instance = None
     __head = None
     
     @classmethod
     def get_instance(cls):
-        if cls._instance is None:
-            cls._instance = CORUDPQueriesWrapper()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = CORUDPQueriesWrapper()
+        return cls.__instance
 
     # utilisation => CORUDPQueriesWrapper.get_instance().handle(params)
     # peut retourner un NoHandlerException si le type de requête est inconnu
@@ -126,8 +152,8 @@ class CORUDPQueriesWrapper():
         self.__head = ReconnectQuery(self.__head)
 
     def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(CORUDPQueriesWrapper, cls).__new__(cls)
+        if cls.__instance is None:
+            cls.__instance = super(CORUDPQueriesWrapper, cls).__new__(cls)
         else:
             raise Exception("Impossible de créer une nouvelle instance de CORUDPQueriesWrapper")
-        return cls._instance
+        return cls.__instance
