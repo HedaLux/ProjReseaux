@@ -76,9 +76,11 @@ def read_json(filename):
         data = json.load(file)
         return data
 
+
 def write_json(filename, data):
     with open(filename, 'w+', encoding='UTF-8') as file:
         json.dump(data, file, indent=4)
+
 
 def check_user_credentials(username, password):
     global DB_FILENAME
@@ -96,6 +98,7 @@ def check_user_credentials(username, password):
         return False
     return True
 
+
 def check_username_disponibility(username):
     global DB_FILENAME
     
@@ -103,6 +106,7 @@ def check_username_disponibility(username):
     if username in user_DB:
         return False
     return True
+
 
 def add_user(username, password):
     global DB_FILENAME
@@ -119,6 +123,7 @@ def add_user(username, password):
         write_json(DB_FILENAME, user_DB)
         return True
     return False
+
 
 def change_password(username, old_password, password, password_confirm):
     if(password != password_confirm):

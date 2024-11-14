@@ -1,5 +1,5 @@
 import eel
-import os.path as osp
+import os
 import json
 import socket
 
@@ -25,8 +25,9 @@ def startGUI():
             eel.start("RoomBrowser.html")
             #TODO call JS func to send server list to GUI
             return
+        os.remove(TOKEN_PATH) # on delete le token dépassé
         eel.start("ConnectFrame.html")
-        #TODO delete the token file
+        
 
 def try_to_reconnect(tokenData):
     initUDPSocket()
@@ -50,12 +51,18 @@ def try_to_reconnect(tokenData):
     responseRaw = UDPSOCK.recv(1024).decode()
     return json.loads(responseRaw)
 
+
 def load_token():
-    if(osp.isfile(TOKEN_PATH)):
+    if(os.isfile(TOKEN_PATH)):
         with open(TOKEN_PATH, 'r+', encoding='UTF-8') as file:
             data = json.loads(file)
-            return data
+            if("token", "servAdrr", "port" in data):
+                return data
+            else:
+                file.close()
+                os.remove(TOKEN_PATH)
     return False
+
 
 def save_token(token, servAddr, port):
     print(f"token = {token}")
@@ -65,10 +72,12 @@ def save_token(token, servAddr, port):
         
         json.dump(dataJson, file, indent=4)
 
+
 def initUDPSocket():
     global UDPSOCK
     if UDPSOCK == None:
        UDPSOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 
 @eel.expose()
 def connect_to_server(username, password, server_address, server_port):
