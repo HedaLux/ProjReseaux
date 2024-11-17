@@ -69,8 +69,6 @@ def load_token():
 def save_token(token, servAddr, port):
     print(f"token = {token}")
     
-
-
     with open(TOKEN_PATH, 'w', encoding='UTF-8') as file:
         dataJson = {"token": token, "servAddr": servAddr, "port": int(port)}
         

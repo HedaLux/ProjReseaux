@@ -52,8 +52,8 @@ class LoginQuery(QueryHandler):
             utils.send_message_to(sock, client_address, "error", "nom d'utilisateur ou mot de passe incorrect")
             return
         
-        Users.get_instance().connect_user(username)
-        token = Users.get_instance().get_user_token(username)
+        UsersCollection.get_instance().connect_user(username)
+        token = UsersCollection.get_instance().get_user_token(username)
 
         utils.send_message_to(sock, client_address, "success", token)
 
@@ -94,8 +94,8 @@ class RegisterQuery(QueryHandler):
 
         add_user(query["data"]["username"], query["data"]["password"])
         
-        Users.get_instance().connect_user(username)
-        token = Users.get_instance().get_user_token(username)
+        UsersCollection.get_instance().connect_user(username)
+        token = UsersCollection.get_instance().get_user_token(username)
 
         utils.send_message_to(sock, client_address, "success", token)
 
@@ -126,7 +126,7 @@ class ReconnectQuery(QueryHandler):
 
         token = query["data"]["token"]
         
-        if not Users.get_instance().is_token_valid(token):
+        if not UsersCollection.get_instance().is_token_valid(token):
             utils.send_message_to(sock, client_address, "error", "le token est dépassé ou incorrect")
             return
         
