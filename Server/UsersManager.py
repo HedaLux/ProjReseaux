@@ -1,5 +1,3 @@
-import json
-import hashlib
 import secrets
 import threading
 import time
@@ -15,13 +13,14 @@ class UsersCollection:
         self.__connected_users = {}
         self.__disconnected_users = {}
         self.__token_cleanup_thread = threading.Thread(target = self.__token_cleanup, args = (self,), daemon=True)
+        self.__token_cleanup_thread.start()
 
     def __new__(cls, *args, **kwargs):
         # Si l'instance n'existe pas encore, on en crée une
         if cls.__instance is None:
             cls.__instance = super(UsersCollection, cls).__new__(cls)
         else:
-            raise Exception("Impossible de créer une nouvelle instance de MaClasse")
+            raise Exception("Impossible de créer une nouvelle instance de UserCollection")
         return cls.__instance
 
     @classmethod
@@ -76,7 +75,14 @@ class UsersCollection:
         return False
     
 class User():
-    def __init__(self, username):
+    def __init__(self, username, token):
         self.tcp_sock = None
         self.username = username
+        self.token = token
+
+    def start_socket():
         pass
+
+    def stop_socket():
+        pass
+
