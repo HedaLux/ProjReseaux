@@ -1,89 +1,254 @@
 {
     "Aur\u00e9lien": {
-        "password": "abc5a32a7aaf263c6358d356cbc78bf02af9465c85bb6bd58aa7a6b6113ac47a"
+        "password": "abc5a32a7aaf263c6358d356cbc78bf02af9465c85bb6bd58aa7a6b6113ac47a",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Nicolas": {
-        "password": "1b5192a4795d71233bf84b4a6bf1cb4c9756ead11a099680077bf5c687bee240"
+        "password": "1b5192a4795d71233bf84b4a6bf1cb4c9756ead11a099680077bf5c687bee240",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Alice": {
-        "password": "cafc32b8cede280666fe24a76b27989a77920e27df010b0a1878db7d063023c0"
+        "password": "cafc32b8cede280666fe24a76b27989a77920e27df010b0a1878db7d063023c0",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Bob": {
-        "password": "b064b37c2ee4bba3a5a9b8a7e8bf8ec01659b6a2798fd4d9ea1368d814bdaa1b"
+        "password": "b064b37c2ee4bba3a5a9b8a7e8bf8ec01659b6a2798fd4d9ea1368d814bdaa1b",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Charlie": {
-        "password": "83e427125495d7f0266908f22b41355e0d30df54d3d461eb9b39d5b51b317258"
+        "password": "83e427125495d7f0266908f22b41355e0d30df54d3d461eb9b39d5b51b317258",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "David": {
-        "password": "b68f97896d02f439d0fd41ba2d50c7a2b45c4aace3a10b49ea825313451170e0"
+        "password": "b68f97896d02f439d0fd41ba2d50c7a2b45c4aace3a10b49ea825313451170e0",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Eva": {
-        "password": "0312c0c1ae2cf4cac721c5fc9336204e45726c92b786dabaefd22a2fc1a0ffc4"
+        "password": "0312c0c1ae2cf4cac721c5fc9336204e45726c92b786dabaefd22a2fc1a0ffc4",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Frank": {
-        "password": "9c2c63fb3db0e2345820c23f0390ba04e4750b98fcbb7d9d0c20b9be1602670c"
+        "password": "9c2c63fb3db0e2345820c23f0390ba04e4750b98fcbb7d9d0c20b9be1602670c",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Grace": {
-        "password": "54bae440240361c4452a9676f0df2555157c0bad6e8a5a20af19982540a47d0b"
+        "password": "54bae440240361c4452a9676f0df2555157c0bad6e8a5a20af19982540a47d0b",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Hannah": {
-        "password": "7527f4f3412c0e21d55b18d9af78ad01564fc2eb78bb49dad5123492ebd37c9a"
+        "password": "7527f4f3412c0e21d55b18d9af78ad01564fc2eb78bb49dad5123492ebd37c9a",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Irene": {
-        "password": "58c2e2087a792e6d081a5b839a151e624fa26878bc496d8e8edbec3bcadccaae"
+        "password": "58c2e2087a792e6d081a5b839a151e624fa26878bc496d8e8edbec3bcadccaae",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Jack": {
-        "password": "34f15fe807c56a0e359d49b3d632b376d3eec92873b646eb02758f1f1c7b09bd"
+        "password": "34f15fe807c56a0e359d49b3d632b376d3eec92873b646eb02758f1f1c7b09bd",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Kate": {
-        "password": "f5e2bee7fc4d1df73b96ff2ef6e678bdb218550b64d6d142717621e1038ac5a8"
+        "password": "f5e2bee7fc4d1df73b96ff2ef6e678bdb218550b64d6d142717621e1038ac5a8",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Leo": {
-        "password": "e074415f401a4c52f5dfe6353891f76913e0ca4b03a87790663eb5aa73d0b4d2"
+        "password": "e074415f401a4c52f5dfe6353891f76913e0ca4b03a87790663eb5aa73d0b4d2",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Mia": {
-        "password": "cfc4d7a183f53c9062a65527b1237fbf3e8eeeb450d434d6d1afd0d6ed0fd95f"
+        "password": "cfc4d7a183f53c9062a65527b1237fbf3e8eeeb450d434d6d1afd0d6ed0fd95f",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Noah": {
-        "password": "c69244d4607be8f6fd7e68901b71adffeb12e5917d198b24cc5e061da6392057"
+        "password": "c69244d4607be8f6fd7e68901b71adffeb12e5917d198b24cc5e061da6392057",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Olivia": {
-        "password": "778cf1f745064e596e90d541110c2ffeb3932f187725ccb4b53d265cad554a26"
+        "password": "778cf1f745064e596e90d541110c2ffeb3932f187725ccb4b53d265cad554a26",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Paul": {
-        "password": "4bd8c10674115aa0a51a3f73b36462aa1b51e2ca738e8e6750caf624cf1f180c"
+        "password": "4bd8c10674115aa0a51a3f73b36462aa1b51e2ca738e8e6750caf624cf1f180c",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Quinn": {
-        "password": "8d914089d0ad81659808e43808fbc7bb3a53bd67e47197f1f07df1eccead22b7"
+        "password": "8d914089d0ad81659808e43808fbc7bb3a53bd67e47197f1f07df1eccead22b7",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Rachel": {
-        "password": "f4ff9250aa7d7d3ef0e84e652b7f50ca827458d1d5b4d73419b606fe971c3937"
+        "password": "f4ff9250aa7d7d3ef0e84e652b7f50ca827458d1d5b4d73419b606fe971c3937",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Sam": {
-        "password": "fc61d6fda0aedee12fa19740e356558d066512ff8795b008080aebe2646f6e70"
+        "password": "fc61d6fda0aedee12fa19740e356558d066512ff8795b008080aebe2646f6e70",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Tina": {
-        "password": "1a47e874cd430e5e478777ff9b14b25597d489acb2ccb85b0a0ce70feb28b66f"
+        "password": "1a47e874cd430e5e478777ff9b14b25597d489acb2ccb85b0a0ce70feb28b66f",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Ursula": {
-        "password": "5c356a548c1c8e20bc80e12abcfee202ab23b1bd37c120f38b4bd754183ff430"
+        "password": "5c356a548c1c8e20bc80e12abcfee202ab23b1bd37c120f38b4bd754183ff430",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Victor": {
-        "password": "c392e03795888d3f367c943b6952fbb6be571e0a281e8fc66755655efe9957dd"
+        "password": "c392e03795888d3f367c943b6952fbb6be571e0a281e8fc66755655efe9957dd",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Wendy": {
-        "password": "a352390945c54d54f567e7f7541648df9fbdd714885b61e23ff41f27dcf8cbc3"
+        "password": "a352390945c54d54f567e7f7541648df9fbdd714885b61e23ff41f27dcf8cbc3",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Xander": {
-        "password": "08ced273df80ec6d8804f2ddb435dc70205f2cefde8bd75fa1f9ed0b522cd73e"
+        "password": "08ced273df80ec6d8804f2ddb435dc70205f2cefde8bd75fa1f9ed0b522cd73e",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
     "Yara": {
-        "password": "0af7db1a328a76aae1de45a6cce8d1b6184e40e432cff0987d4c7ceda675b260"
+        "password": "0af7db1a328a76aae1de45a6cce8d1b6184e40e432cff0987d4c7ceda675b260",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     },
-    "Zoe": {
-        "password": "a566443186e8d8617a3c587ef1db79bbb110139546d791f7d2cedd360a905e5b"
-    },
-    "test123": {
-        "password": "be60631374049220ec6252e977b999722503fabb7da889673c8b3f24173737d7"
+    "ZoeY": {
+        "password": "4a1a490ff87e26311c78e4b27c0bb74822bdc923caa0f662ba74b6cbd8455173",
+        "stats": {
+            "multiplayer_games_played": 0,
+            "multiplayer_wins": 0,
+            "solo_games_played": 0,
+            "solo_wins": 0
+        }
     }
 }

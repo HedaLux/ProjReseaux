@@ -40,6 +40,17 @@ def check_username_disponibility(username):
         return False
     return True
 
+def get_user_stats(username):
+    user_DB = read_json(DB_FILENAME)
+    if username not in user_DB:
+        raise Exception(f"L'utilisateur {username} n'existe pas.")
+    
+    return user_DB[username].get("stats", {
+        "games_played": 0,
+        "wins": 0,
+        "losses": 0
+    })
+
 
 def add_user(username, password):
     global DB_FILENAME
@@ -52,7 +63,15 @@ def add_user(username, password):
     password_hash = hash.hexdigest()
     
     if(check_username_disponibility(username)):
-        user_DB[username] = {"password": password_hash}
+        user_DB[username] = {
+            "password": password_hash,
+            "stats": {
+                "multiplayer_games_played": 0,
+                "multiplayer_wins": 0,
+                "solo_games_played": 0,
+                "solo_wins": 0,
+            }
+        }
         write_json(DB_FILENAME, user_DB)
         return True
     return False
@@ -110,4 +129,4 @@ if __name__ == "__main__":
     add_user("Wendy", "superman")
     add_user("Xander", "qwertyuiop")
     add_user("Yara", "pass123")
-    add_user("Zoe", "password1")
+    add_user("ZoeY", "password1")
