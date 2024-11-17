@@ -31,7 +31,7 @@ def start_connection_process(stop_event):
                     print("requête traitée avec succès")
                     print("Serveur en attente de message.")
                 except(NoHandlerException):
-                    print(f"Le client [{client_address}] a envoyé une requête inconnue ({query["type"]})")
+                    print(f'Le client [{client_address}] a envoyé une requête inconnue ({query["type"]})')
                     #TODO envoyer une erreur au client
             else:
                 pass
