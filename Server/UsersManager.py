@@ -1,6 +1,7 @@
 import secrets
 import threading
 import time
+import socket
 from JSONDBFunctions import *
 
 class UsersCollection:
@@ -8,12 +9,18 @@ class UsersCollection:
     TOKEN_SIZE = 16
     MAX_DISCONNECTED_TIME = 60 * 20 # en secondes ici 20
     TIME_BETWEEN_TOKEN_CHECK = 60 # en secondes ici 1 minute
+    SOCKET_ROOM_BROWSER_PORT = 25001
+    SOCKET_ROOM_BROWSER_QUEUE = 25
 
     def __init__(self):
         self.__connected_users = {}
         self.__disconnected_users = {}
         self.__token_cleanup_thread = threading.Thread(target = self.__token_cleanup, args = (self,), daemon=True)
         self.__token_cleanup_thread.start()
+        self.__socketRoomBrowser = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socketRoomBrowser.setblocking(0) 
+        self.__socketRoomBrowser.bind("0.0.0.0", self.SOCKET_ROOM_BROWSER_PORT)
+        self.__socketRoomBrowser.listen(self.SOCKET_ROOM_BROWSER_QUEUE)
 
     def __new__(cls, *args, **kwargs):
         # Si l'instance n'existe pas encore, on en crée une
@@ -73,16 +80,22 @@ class UsersCollection:
             if(user["token"] == token):
                 return True
         return False
-    
+
+
 class User():
+
     def __init__(self, username, token):
-        self.tcp_sock = None
+        self.conn = None
+        self.addr = None
         self.username = username
         self.token = token
 
-    def start_socket():
-        pass
+    def start_connection(self):
+        conn, addr = UsersCollection.get_instance().__socketRoomBrowser.accept()
+        self.conn = conn
+        self.addr = addr
 
-    def stop_socket():
-        pass
+    def stop_connection(self):
+        self.conn = None
+        self.addr = None
 

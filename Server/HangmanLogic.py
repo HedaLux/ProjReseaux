@@ -26,7 +26,7 @@ class Hangman():
                 return 1
         else:
             self.players_state[player_token]['nb_tries_left'] -= 1
-            
+
         return 0
 
     def add_player(self, player_token):
