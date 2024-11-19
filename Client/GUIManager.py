@@ -67,8 +67,6 @@ def load_token():
 
 
 def save_token(token, servAddr, port):
-    print(f"token = {token}")
-    
     with open(TOKEN_PATH, 'w', encoding='UTF-8') as file:
         dataJson = {"token": token, "servAddr": servAddr, "port": int(port)}
         
@@ -103,7 +101,11 @@ def connect_to_server(username, password, server_address, server_port):
     response = json.loads(response_raw)
 
     print(f"reponse['message'] = {response['message']}")
-    save_token(response["message"], server_address, server_port)
+
+    tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_sock.connect((server_address, response["message"]["port"]))
+
+    save_token(response["message"]["token"], server_address, server_port)
 
     return json.loads(response_raw)
     

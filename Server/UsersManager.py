@@ -43,22 +43,27 @@ class UsersCollection:
         while(True):
             try:
                 conn, addr = self.__socket_room_browser.accept()
+                
+                has_been_attributed = False
+                
                 print(addr)
                 conn.setblocking(False)
-                for user in self.__connected_users:
+                for user in self.__connected_users.values():
                     if user.addr == addr:
                         user.conn = conn
-                conn.close()
+                        has_been_attributed = True
+                
+                if(not has_been_attributed):
+                    conn.close()
             except BlockingIOError:
                 pass
             
             for user in self.__connected_users.values():
                 try:
-                    if not user.conn == None:
-                        message = recevoir_message(self.__socket_room_browser, user.addr)
-                        if message:
-                            pass
-                            #TODO handle message
+                    message = recevoir_message(self.__socket_room_browser, user.addr)
+                    if message:
+                        pass
+                        #TODO handle message
                 except (ConnectionResetError, ConnectionAbortedError):
                     self.disconnect_user(user)
 

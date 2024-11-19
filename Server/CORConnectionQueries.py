@@ -54,7 +54,9 @@ class LoginQuery(QueryHandler):
         
         token = UsersCollection.get_instance().connect_user(username, client_address)
 
-        utils.send_message_to(sock, client_address, "success", token)
+        data = {"token": token, "port": UsersCollection.SOCKET_ROOM_BROWSER_PORT}
+
+        utils.send_message_to(sock, client_address, "success", data)
 
       
 # Maillon d'inscription
