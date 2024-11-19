@@ -11,7 +11,7 @@ def send_message_to(sock, client_address, type, message):
     except ConnectionResetError:
         print(f"l'hôte : {client_address} a fermé la connection avant de recevoir la réponse")
 
-BUFFERS = {}
+buffers = {}
 
 def recevoir_message(sock, addr):
     global buffers

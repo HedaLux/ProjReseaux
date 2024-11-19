@@ -43,6 +43,7 @@ class UsersCollection:
         while(True):
             try:
                 conn, addr = self.__socket_room_browser.accept()
+                print(addr)
                 conn.setblocking(False)
                 for user in self.__connected_users:
                     if user.addr == addr:
@@ -51,12 +52,13 @@ class UsersCollection:
             except BlockingIOError:
                 pass
             
-            for user in self.__connected_users:
+            for user in self.__connected_users.values():
                 try:
-                    message = recevoir_message(self.__socket_room_browser, user.addr)
-                    if message:
-                        pass
-                        #TODO handle message
+                    if not user.conn == None:
+                        message = recevoir_message(self.__socket_room_browser, user.addr)
+                        if message:
+                            pass
+                            #TODO handle message
                 except (ConnectionResetError, ConnectionAbortedError):
                     self.disconnect_user(user)
 
