@@ -45,6 +45,7 @@ class Room():
             time.sleep(self.round_cooldown)
 
         self.room_status = RoomStatus.GAME_ENDED
+        self.game_end()
 
     def run_round(self, stop_event):
         while not stop_event.is_set():

@@ -52,8 +52,7 @@ class LoginQuery(QueryHandler):
             utils.send_message_to(sock, client_address, "error", "nom d'utilisateur ou mot de passe incorrect")
             return
         
-        UsersCollection.get_instance().connect_user(username)
-        token = UsersCollection.get_instance().get_user_token(username)
+        token = UsersCollection.get_instance().connect_user(username, client_address)
 
         utils.send_message_to(sock, client_address, "success", token)
 
