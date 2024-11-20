@@ -17,10 +17,6 @@ function updateUsername(username) {
     document.querySelector(".greetings span").textContent = username; // Modifier le DOM
 }
 
-function updateUsername(username) {
-    console.log("Mise à jour du nom d'utilisateur : ", username); // Debug
-    document.querySelector(".greetings span").textContent = username; // Modifier le DOM
-}
 
 
 document.getElementById("background-vid").playbackRate = 0.2;

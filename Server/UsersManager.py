@@ -163,7 +163,21 @@ class UsersCollection:
             raise Exception("Utilisateur absent de la table des utilisateurs déconnectés")
 
     def get_user_token(self, username):
-        return self.__connected_users[username]["token"]
+        # Vérifier dans les utilisateurs connectés
+        if username in self.__connected_users:
+            return self.__connected_users[username]["token"]
+        
+        # Vérifier dans les utilisateurs en attente de connexion
+        if username in self.__waiting_to_connect_users:
+            return self.__waiting_to_connect_users[username]["token"]
+        
+        # Vérifier dans les utilisateurs déconnectés
+        if username in self.__disconnected_users:
+            return self.__disconnected_users[username]["token"]
+        
+        # Si non trouvé, lever une exception
+        raise KeyError(f"Utilisateur {username} introuvable dans toutes les listes.")
+
     
     def is_token_valid(self, token):
         for user in self.__disconnected_users:

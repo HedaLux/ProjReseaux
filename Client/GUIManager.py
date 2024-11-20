@@ -161,29 +161,42 @@ def connect_to_server(username, password, server_address, server_port):
 
 @eel.expose()
 def register_on_server(username, password, password_confirm, server_address, server_port:int):
-    global UDPSOCK
+    global UDPSOCK, TCP_SOCK, current_user
 
-    initUDPSocket()
+    try:
+        initUDPSocket()
 
-    query = {
-        "type" : "register",
-        "data" : {
-            "username" : username,
-            "password" : password,
-            "passwordConfirm" : password_confirm
+        query = {
+            "type": "register",
+            "data": {
+                "username": username,
+                "password": password,
+                "passwordConfirm": password_confirm
+            }
         }
-    }
-    
-    query_str = json.dumps(query) + '\n'
+        query_str = json.dumps(query) + '\n'
 
-    UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
+        # Envoi de la requête d'inscription
+        UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
 
-    response_raw = UDPSOCK.recv(1024).decode()
-    response = json.loads(response_raw)
+        response_raw = UDPSOCK.recv(1024).decode()
+        response = json.loads(response_raw)
 
-    save_token(response["message"], server_address, server_port)
 
-    return json.loads(response_raw)
+        if response.get("response") == "success":
+            save_token(response["message"]["token"], server_address, server_port)
+            # Après inscription, établir une connexion TCP 
+            TCP_SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(response)
+            TCP_SOCK.connect((server_address, response["message"]["port"]))
+            current_user = username
+            print(f"Utilisateur {username} inscrit et connecté en TCP.")
+            return {"response": "success", "message": f"Utilisateur {username} inscrit et connecté."}
+        else:
+            return {"response": "error", "message": response.get("message", "Erreur inconnue")}
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
+
 
 
 @eel.expose()

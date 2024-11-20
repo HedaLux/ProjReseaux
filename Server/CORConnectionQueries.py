@@ -95,10 +95,14 @@ class RegisterQuery(QueryHandler):
 
         add_user(query["data"]["username"], query["data"]["password"])
         
-        UsersCollection.get_instance().add_user(username)
-        token = UsersCollection.get_instance().get_user_token(username)
+        token = UsersCollection.get_instance().add_user(username, client_address)
+        response_data = {
+            "token": token,  # Le token généré pour l'utilisateur
+            "port": UsersCollection.SOCKET_ROOM_BROWSER_PORT  # Remplacez `tcp_port` par le port réellement utilisé pour la connexion TCP
+        }
 
-        utils.send_message_to(sock, client_address, "success", token)
+        utils.send_message_to(sock, client_address, "success", response_data)
+
 
 
 # Maillon de déconnexion
