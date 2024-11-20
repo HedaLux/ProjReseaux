@@ -28,12 +28,12 @@ class UsersCollection:
         self.__socket_room_browser.bind(("0.0.0.0", self.SOCKET_ROOM_BROWSER_PORT))
         self.__socket_room_browser.listen(self.SOCKET_ROOM_BROWSER_QUEUE)
         
-        # Thread qui gère l'acceptation des connexions utilisateurs sur le socket précédent et lit les messages envoyé sur ce même socket
-        self.__room_browser_accept_thread = threading.Thread(target=self.__handle_tcp_accept)
+        # Thread qui gère l'acceptation des connexions utilisateurs sur le socket "__socket_room_browser"
+        self.__room_browser_accept_thread = threading.Thread(target=self.__handle_room_browser_tcp_accept)
         self.__room_browser_accept_thread.start()
 
-        # Thread qui gère l'acceptation des connexions utilisateurs sur le socket précédent et lit les messages envoyé sur ce même socket
-        self.__room_browser_thread = threading.Thread(target=self.__handle_room_browser)
+        # Thread qui lit les messages envoyé sur le socket "__socket_room_browser"
+        self.__room_browser_thread = threading.Thread(target=self.__handle_room_browser_messages)
         self.__room_browser_thread.start()
 
 
@@ -51,7 +51,7 @@ class UsersCollection:
             cls.__instance = UsersCollection()
         return cls.__instance
 
-    def __handle_tcp_accept(self):
+    def __handle_room_browser_tcp_accept(self):
         while True:
             # On gère les nouvelles connexions
             try:
@@ -72,7 +72,7 @@ class UsersCollection:
             except BlockingIOError:
                 pass
 
-    def __handle_room_browser(self):
+    def __handle_room_browser_messages(self):
         while True:
             # On lit les messages des utilisateurs connectés
             for user in self.__connected_users.values():
