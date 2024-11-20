@@ -60,15 +60,22 @@ class UsersCollection:
                 has_been_attributed = False
                 
                 conn.setblocking(False)
+
                 for user in self.__waiting_to_connect_users.values():
-                    if user.addr == addr:
+                    if user.addr[0] == addr[0]:
+                        user.addr = addr
                         user.conn = conn
                         self.__waiting_to_connect_users.pop(user.token)
                         self.__connected_users[user.token] = user
                         has_been_attributed = True
+                        break
                 
                 if(not has_been_attributed):
                     conn.close()
+                else:
+                    print(f"connected user = {self.__connected_users}")
+                    print(f"waiting for user = {self.__waiting_to_connect_users}")
+                    print(f"disconnected user = {self.__disconnected_users}")
             except BlockingIOError:
                 pass
 
@@ -77,7 +84,7 @@ class UsersCollection:
             # On lit les messages des utilisateurs connectés
             for user in self.__connected_users.values():
                 try:
-                    message = recevoir_message(self.__socket_room_browser, user.addr)
+                    message = recevoir_message(user.conn, user.addr)
                     if message:
                         pass
                         #TODO handle message
