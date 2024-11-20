@@ -16,6 +16,7 @@ class UsersCollection:
     def __init__(self):
         self.__connected_users = {}
         self.__disconnected_users = {}
+        self.__waiting_to_connect_users = {}
         self.__token_cleanup_thread = threading.Thread(target = self.__token_cleanup, daemon=True)
         self.__token_cleanup_thread.start()
         self.__socket_room_browser = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,11 +47,12 @@ class UsersCollection:
                 
                 has_been_attributed = False
                 
-                print(addr)
                 conn.setblocking(False)
-                for user in self.__connected_users.values():
+                for user in self.__waiting_to_connect_users.values():
                     if user.addr == addr:
                         user.conn = conn
+                        self.__waiting_to_connect_users.pop(user.token)
+                        self.__connected_users[user.token] = user
                         has_been_attributed = True
                 
                 if(not has_been_attributed):
@@ -93,13 +95,13 @@ class UsersCollection:
         self.__connected_users[username] = {"token":token}
         return token"""
     
-    def connect_user(self, username, addr):
+    def add_user(self, username, addr):
         print(addr)
         token = self.__generate_token()
         user = User(username, token, addr)
         print(user.addr)
         
-        self.__connected_users[token] = user
+        self.__waiting_to_connect_users[token] = user
         return token
     
     def disconnect_user(self, user):

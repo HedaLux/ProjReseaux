@@ -52,7 +52,7 @@ class LoginQuery(QueryHandler):
             utils.send_message_to(sock, client_address, "error", "nom d'utilisateur ou mot de passe incorrect")
             return
         
-        token = UsersCollection.get_instance().connect_user(username, client_address)
+        token = UsersCollection.get_instance().add_user(username, client_address)
 
         data = {"token": token, "port": UsersCollection.SOCKET_ROOM_BROWSER_PORT}
 
@@ -95,7 +95,7 @@ class RegisterQuery(QueryHandler):
 
         add_user(query["data"]["username"], query["data"]["password"])
         
-        UsersCollection.get_instance().connect_user(username)
+        UsersCollection.get_instance().add_user(username)
         token = UsersCollection.get_instance().get_user_token(username)
 
         utils.send_message_to(sock, client_address, "success", token)
