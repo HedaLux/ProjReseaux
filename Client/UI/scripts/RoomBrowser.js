@@ -1,3 +1,28 @@
+console.log("RoomBrowser.js chargé avec succès");
+
+// Récupérer et afficher le nom d'utilisateur
+document.addEventListener("DOMContentLoaded", () => {
+    const username = localStorage.getItem("username"); // Récupérer depuis localStorage
+    if (username) {
+        updateUsername(username); // Appeler la fonction pour mettre à jour
+    } else {
+        console.warn("Nom d'utilisateur introuvable !");
+    }
+
+    fetchUserStats(); // Appeler la récupération des stats
+});
+
+function updateUsername(username) {
+    console.log("Mise à jour du nom d'utilisateur : ", username); // Debug
+    document.querySelector(".greetings span").textContent = username; // Modifier le DOM
+}
+
+function updateUsername(username) {
+    console.log("Mise à jour du nom d'utilisateur : ", username); // Debug
+    document.querySelector(".greetings span").textContent = username; // Modifier le DOM
+}
+
+
 document.getElementById("background-vid").playbackRate = 0.2;
 
 const serverBrowsers = document.getElementsByClassName("server-browser")
@@ -104,3 +129,27 @@ Array.from(radioButtons).forEach((radioButton) => {
         radioButton.click()
     })
 })
+
+// Fonction pour mettre à jour les statistiques utilisateur
+function updateUserStats(stats) {
+    //console.log("Mise à jour des statistiques avec : ", stats);
+    document.querySelector(".multiplayer_games_played").textContent = stats.multiplayer_games_played;
+    document.querySelector(".multiplayer_wins").textContent = stats.multiplayer_wins;
+    document.querySelector(".solo_games_played").textContent = stats.solo_games_played;
+    document.querySelector(".solo_wins").textContent = stats.solo_wins;
+}
+
+// Appel de la fonction exposée par Python pour récupérer les stats
+function fetchUserStats() {
+    console.log("called");
+    eel.get_user_stats_ui()().then((response) => {
+        console.log("Réponse reçue depuis Python : ", response); // Debug
+        if (response.response === "success") {
+            updateUserStats(response.stats);
+        } else {
+            alert("Erreur lors de la récupération des statistiques : " + response.message);
+        }
+    }).catch((err) => {
+        console.error("Erreur lors de l'appel à get_user_stats_ui : ", err);
+    });
+}

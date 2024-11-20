@@ -5,6 +5,7 @@ import socket
 
 TOKEN_PATH = "token.json"
 UDPSOCK = None
+TCP_SOCK = None
 
 def startGUI():
     tokenData = load_token()
@@ -78,7 +79,7 @@ def initUDPSocket():
     if UDPSOCK == None:
        UDPSOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-
+'''
 @eel.expose()
 def connect_to_server(username, password, server_address, server_port):
     global UDPSOCK
@@ -108,6 +109,54 @@ def connect_to_server(username, password, server_address, server_port):
     save_token(response["message"]["token"], server_address, server_port)
 
     return json.loads(response_raw)
+    '''
+
+@eel.expose()
+def connect_to_server(username, password, server_address, server_port):
+    global UDPSOCK, current_user, TCP_SOCK
+
+    try:
+        # Initialisation du socket UDP
+        initUDPSocket()
+
+        # Création de la requête de connexion
+        query = {
+            "type": "login",
+            "data": {
+                "username": username,
+                "password": password
+            }
+        }
+        query_str = json.dumps(query) + '\n'
+
+        # Envoi de la requête UDP
+        UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
+        print(f"Message envoyé : {query} à {(server_address, int(server_port))}")
+
+        # Réception de la réponse du serveur
+        response_raw = UDPSOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        # Affichage de la réponse pour débogage
+        print(f"Réponse reçue : {response['message']}")
+
+        if response.get("response") == "success":
+            # Création de la connexion TCP
+            TCP_SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            TCP_SOCK.connect((server_address, response["message"]["port"]))
+
+            # Sauvegarde du token utilisateur et mise à jour de l'utilisateur courant
+            save_token(response["message"]["token"], server_address, server_port)
+            current_user = username
+
+            return response
+        else:
+            # En cas d'erreur dans la réponse
+            return {"response": "error", "message": response.get("message", "Erreur inconnue")}
+    except Exception as e:
+        # Gestion des exceptions
+        return {"response": "error", "message": str(e)}
+
     
 
 @eel.expose()
@@ -135,3 +184,42 @@ def register_on_server(username, password, password_confirm, server_address, ser
     save_token(response["message"], server_address, server_port)
 
     return json.loads(response_raw)
+
+
+@eel.expose()
+def get_user_stats_ui():
+    global TCP_SOCK
+
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        query = {
+            "type": "getuserstats",
+            "data": {
+                "token": token
+            }
+        }
+
+        #verifier que le socket TCP est ouvert
+        if TCP_SOCK is None:
+            return {"response": "error", "message": "Connexion TCP non établie"}
+
+        # Envoyer la requete des stats
+        TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+
+        response_raw = TCP_SOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        if response.get("response") == "success":
+            return {"response": "success", "stats": response.get("message")}
+        else:
+            return {"response": "error", "message": response.get("message", "Erreur inconnue")}
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
+
+
+
+
+

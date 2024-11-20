@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from UsersManager import *
 from Room import RoomsCollection
 import utils
+from JSONDBFunctions import get_user_stats
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
@@ -44,8 +45,11 @@ class GetUserStatsQuery(RoomBrowserQueryHandler):
             self._try_next(sock, query, client_address)
             return
 
+        #print("On est dans le maillon STATS \n")
+        
         token = query["data"].get("token")
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        from UsersManager import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
@@ -53,7 +57,10 @@ class GetUserStatsQuery(RoomBrowserQueryHandler):
 
         try:
             # Récupération des stats à partir de JSONDBFunctions
+            #print("Ici on try get_user_stats \n")
             stats = get_user_stats(user.username)
+            #print(f"Les stats obtenues : {stats}\n")
+
             utils.send_message_to(sock, client_address, "success", stats)
         except Exception as e:
             utils.send_message_to(sock, client_address, "error", str(e))
