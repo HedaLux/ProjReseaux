@@ -7,24 +7,35 @@ from JSONDBFunctions import *
 
 class UsersCollection:
     __instance = None
-    TOKEN_SIZE = 16
-    MAX_DISCONNECTED_TIME = 60 * 20 # en secondes ici 20
-    TIME_BETWEEN_TOKEN_CHECK = 60 # en secondes ici 1 minute
+    TOKEN_SIZE = 16 # la taille des tokens générés
+    MAX_DISCONNECTED_TIME = 60 * 20 # en secondes ici 20 minutes
+    INTERVAL_BETWEEN_TOKEN_CHECK = 60 # en secondes ici 1 minute
     SOCKET_ROOM_BROWSER_PORT = 25001
     SOCKET_ROOM_BROWSER_QUEUE = 25
 
     def __init__(self):
-        self.__connected_users = {}
-        self.__disconnected_users = {}
-        self.__waiting_to_connect_users = {}
+        self.__connected_users = {} # Dictionnaire des utilisateurs connectés en TCP
+        self.__disconnected_users = {} # Dictionnaire des utilisateurs qui ont interrompu la connexion
+        self.__waiting_to_connect_users = {} # Dictionnaire des utilisateurs qui se sont log via le socket UDP de connexion dont on attend la connexion TCP
+        
+        # Thread qui met à jour le dictionnaire "__disconnected_users" quand des utilisateurs sont déconnectés depuis trop longtemps
         self.__token_cleanup_thread = threading.Thread(target = self.__token_cleanup, daemon=True)
         self.__token_cleanup_thread.start()
+        
+        # Socket TCP qui gère les requête de la vue RoomBrowser
         self.__socket_room_browser = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_room_browser.setblocking(0) 
         self.__socket_room_browser.bind(("0.0.0.0", self.SOCKET_ROOM_BROWSER_PORT))
         self.__socket_room_browser.listen(self.SOCKET_ROOM_BROWSER_QUEUE)
+        
+        # Thread qui gère l'acceptation des connexions utilisateurs sur le socket précédent et lit les messages envoyé sur ce même socket
+        self.__room_browser_accept_thread = threading.Thread(target=self.__handle_tcp_accept)
+        self.__room_browser_accept_thread.start()
+
+        # Thread qui gère l'acceptation des connexions utilisateurs sur le socket précédent et lit les messages envoyé sur ce même socket
         self.__room_browser_thread = threading.Thread(target=self.__handle_room_browser)
         self.__room_browser_thread.start()
+
 
     def __new__(cls, *args, **kwargs):
         # Si l'instance n'existe pas encore, on en crée une
@@ -40,8 +51,9 @@ class UsersCollection:
             cls.__instance = UsersCollection()
         return cls.__instance
 
-    def __handle_room_browser(self):
-        while(True):
+    def __handle_tcp_accept(self):
+        while True:
+            # On gère les nouvelles connexions
             try:
                 conn, addr = self.__socket_room_browser.accept()
                 
@@ -59,7 +71,10 @@ class UsersCollection:
                     conn.close()
             except BlockingIOError:
                 pass
-            
+
+    def __handle_room_browser(self):
+        while True:
+            # On lit les messages des utilisateurs connectés
             for user in self.__connected_users.values():
                 try:
                     message = recevoir_message(self.__socket_room_browser, user.addr)
@@ -72,7 +87,7 @@ class UsersCollection:
 
     def __token_cleanup(self):
         while(True):
-            time.sleep(self.TIME_BETWEEN_TOKEN_CHECK)
+            time.sleep(self.INTERVAL_BETWEEN_TOKEN_CHECK)
             current_time = time.time()
             expired_user_token = []
             for user in self.__disconnected_users:
@@ -80,6 +95,7 @@ class UsersCollection:
                     expired_user_token.append(user)
             for user in expired_user_token:
                 del self.disconnected_users[user]
+
 
     def __generate_token(self):
         return secrets.token_hex(self.TOKEN_SIZE)
@@ -96,16 +112,18 @@ class UsersCollection:
         return token"""
     
     def add_user(self, username, addr):
-        print(addr)
+        # On génère un nouveau token pour l'utilisateur
         token = self.__generate_token()
+
+        # On créé l'utilisateur
         user = User(username, token, addr)
-        print(user.addr)
         
+        # On ajoute l'utilisateur dans la fil d'attente des connexions
         self.__waiting_to_connect_users[token] = user
         return token
     
     def disconnect_user(self, user):
-        self.__connected_users.popitem(user.token)
+        self.__connected_users.pop(user.token)
         self.__disconnected_users[user.token] = user
 
     """def reconnect_user(self, user):
