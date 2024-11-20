@@ -139,42 +139,19 @@ class ReconnectQuery(QueryHandler):
         #TODO si oui envoyer la réponse de succès
 
 
-# Maillon de récupération des salles
-class GetRoomsQuery(QueryHandler):
-    def handle(self, sock, query, client_address):
-        if(query["type"] != "getrooms"):
-            self._try_next(sock, query, client_address)
-            return
-
-
-# Maillon de création de salles
-class CreateRoomQuery(QueryHandler):
-    def handle(self, sock, query, client_address):
-        if(query["type"] != "createrooms"):
-            self._try_next(sock, query, client_address)
-            return
-
-
-# Maillon de connexion à une salles
-class JoinRoomQuery(QueryHandler):
-    def handle(self, sock, query, client_address):
-        if(query["type"] != "joinroom"):
-            self._try_next(sock, query, client_address)
-            return
-
 
 # Classe singleton qui permet de construire une seule fois la chaine de responsabilité
-class CORUDPQueriesWrapper():
+class CORConnectionQueriesWrapper():
     __instance = None
     __head = None
     
     @classmethod
     def get_instance(cls):
         if cls.__instance is None:
-            cls.__instance = CORUDPQueriesWrapper()
+            cls.__instance = CORConnectionQueriesWrapper()
         return cls.__instance
 
-    # utilisation => CORUDPQueriesWrapper.get_instance().handle(params)
+    # utilisation => CORConnectionQueriesWrapper.get_instance().handle(params)
     # peut retourner un NoHandlerException si le type de requête est inconnu
     def handle(self, sock, query, client_address):
         self.__head.handle(sock, query, client_address)
@@ -187,7 +164,7 @@ class CORUDPQueriesWrapper():
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
-            cls.__instance = super(CORUDPQueriesWrapper, cls).__new__(cls)
+            cls.__instance = super(CORConnectionQueriesWrapper, cls).__new__(cls)
         else:
-            raise Exception("Impossible de créer une nouvelle instance de CORUDPQueriesWrapper")
+            raise Exception("Impossible de créer une nouvelle instance de CORConnectionQueriesWrapper")
         return cls.__instance

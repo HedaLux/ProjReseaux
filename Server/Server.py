@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 import json
-from CORConnectionQueries import CORUDPQueriesWrapper as CORUDP, NoHandlerException
+from CORConnectionQueries import CORConnectionQueriesWrapper as CORConnection, NoHandlerException
 
 
 # 0.0.0.0 = toutes les interfaces réseau
@@ -27,7 +27,7 @@ def start_connection_process(stop_event):
 
             if("type" in query):
                 try:
-                    CORUDP.get_instance().handle(UDP_Socket, query, client_address)
+                    CORConnection.get_instance().handle(UDP_Socket, query, client_address)
                     print("requête traitée avec succès")
                     print("Serveur en attente de message.")
                 except(NoHandlerException):
