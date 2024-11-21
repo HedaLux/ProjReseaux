@@ -239,5 +239,22 @@ function refreshRooms() {
     fetchRooms();
 }
 
+document.querySelector(".logout-button").addEventListener("click", () => {
+    console.log("Déconnexion en cours...");
+
+    eel.disconnect_user()().then((res) => {
+        if (res.response === "success") {
+            console.log("Déconnexion réussie.");
+            localStorage.clear(); // Nettoyer toutes les données locales
+            window.location.href = "ConnectFrame.html"; // Rediriger vers la page de connexion
+        } else {
+            alert("Erreur lors de la déconnexion : " + res.message);
+        }
+    }).catch((err) => {
+        console.error("Erreur lors de la déconnexion :", err);
+    });
+});
+
+
 
 

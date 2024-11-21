@@ -79,39 +79,6 @@ def initUDPSocket():
     if UDPSOCK == None:
        UDPSOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-'''
-@eel.expose()
-def connect_to_server(username, password, server_address, server_port):
-    global UDPSOCK
-
-    initUDPSocket()
-
-    query = {
-        "type" : "login",
-        "data" : {
-            "username" : username,
-            "password" : password
-        }
-    }
-    
-    query_str = json.dumps(query) + '\n'
-
-    UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
-    print(f"message : {query} sent to {(server_address, int(server_port))}")
-    response_raw = UDPSOCK.recv(1024).decode()
-    response = json.loads(response_raw)
-
-    print(f"reponse['message'] = {response['message']}")
-
-    tcp_sock_port = response["message"]["port"]
-
-    tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_sock.connect((server_address, response["message"]["port"]))
-
-    save_token(response["message"]["token"], server_address, server_port)
-
-    return json.loads(response_raw)
-    '''
 
 @eel.expose()
 def connect_to_server(username, password, server_address, server_port):
@@ -198,6 +165,50 @@ def register_on_server(username, password, password_confirm, server_address, ser
             return {"response": "error", "message": response.get("message", "Erreur inconnue")}
     except Exception as e:
         return {"response": "error", "message": str(e)}
+    
+def remove_token_file():
+    try:
+        os.remove("token.json")
+        print("Fichier token.json supprimé.")
+    except FileNotFoundError:
+        print("Fichier token.json déjà supprimé.")
+
+
+@eel.expose
+def disconnect_user():
+    global TCP_SOCK
+
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        query = {
+            "type": "disconnect",
+            "data": {
+                "token": token
+            }
+        }
+
+        # Envoyer la requête de déconnexion au serveur
+        TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+
+        # Réception de la réponse
+        response_raw = TCP_SOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        if response.get("response") == "success":
+            print("Déconnexion réussie.")
+            remove_token_file()  # Supprimer le fichier token.json
+        else:
+            print(f"Erreur lors de la déconnexion : {response['message']}")
+
+        # Fermer le socket TCP
+        TCP_SOCK.close()
+        return response
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
+
 
 
 

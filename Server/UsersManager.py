@@ -143,9 +143,21 @@ class UsersCollection:
         self.__waiting_to_connect_users[token] = user
         return token
     
+    # fonction pour la déconnexion non naturelle (crash, exctinction du pc, ...)
     def disconnect_user(self, user):
         self.__connected_users.pop(user.token)
         self.__disconnected_users[user.token] = user
+
+    # fonction pour la déconnexion totale via le bouton "se déconnecter"
+    def remove_user(self, token):
+        user = self.__connected_users.pop(token, None)  # Supprimer des utilisateurs connectés
+        if not user:
+            user = self.__disconnected_users.pop(token, None)  # Supprimer des utilisateurs déconnectés
+        if user:
+            print(f"Utilisateur {user.username} complètement supprimé.")
+        else:
+            print(f"Aucun utilisateur trouvé avec le token : {token}")
+
 
     """def reconnect_user(self, user):
         pass"""

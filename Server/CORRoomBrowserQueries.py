@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from UsersManager import UsersCollection
+#from UsersManager import UsersCollection
 from Room import RoomsCollection
 import utils
 from JSONDBFunctions import get_user_stats
@@ -89,6 +89,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
 
         room_id = query["data"].get("room_id")
         token = query["data"].get("token")
+        from UsersManager import UsersCollection
         user = UsersCollection.get_instance().__connected_users.get(token)
 
         if user is None:
@@ -147,6 +148,27 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
 
         utils.send_message_to(sock, client_address, "success", room_info)
 
+class DisconnectQuery(RoomBrowserQueryHandler):
+    def handle(self, sock, query, client_address):
+        if query["type"] != "disconnect":
+            self._try_next(sock, query, client_address)
+            return
+
+        token = query["data"].get("token")
+        from UsersManager import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
+
+        if user is None:
+            utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
+            return
+
+        # Supprimer l'utilisateur des utilisateurs connectés
+        UsersCollection.get_instance().remove_user(token)
+
+        # Répondre avec succès
+        utils.send_message_to(sock, client_address, "success", "Déconnexion réussie")
+
+
 
 # Classe singleton pour construire la chaîne de responsabilité
 class CORRoomBrowserQueriesWrapper():
@@ -167,6 +189,7 @@ class CORRoomBrowserQueriesWrapper():
         self.__head = GetUserStatsQuery(self.__head)
         self.__head = JoinRoomQuery(self.__head)
         self.__head = CreateRoomQuery(self.__head)
+        self.__head = DisconnectQuery(self.__head)
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
