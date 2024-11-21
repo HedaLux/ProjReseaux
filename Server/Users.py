@@ -2,6 +2,7 @@ import secrets
 import threading
 import time
 import socket
+from enum import Enum
 from CORRoomBrowserQueries import CORRoomBrowserQueriesWrapper
 from utils import *
 from JSONDBFunctions import *
@@ -91,18 +92,19 @@ class UsersCollection:
             # Ajout d'une copie ici pour éviter d'itérer dans une liste qui change de dimension
             __connected_users_copy = self.__connected_users.copy()
             for user in __connected_users_copy.values():
-                try:
-                    message = recevoir_message(user.conn, user.addr)
-                    if message:
-                        print(f"Message reçu de {user.username}: {message}")
-                    if message:
-                        # Décoder la requête JSON
-                        query = json.loads(message)
-                        CORRoomBrowserQueriesWrapper.get_instance().handle(user.conn, query, user.addr)
-                        pass
-                        #TODO handle message
-                except (ConnectionResetError, ConnectionAbortedError):
-                    self.disconnect_user(user)
+                if(user.status == Status.INMENU):
+                    try:
+                        message = recevoir_message(user.conn, user.addr)
+                        if message:
+                            print(f"Message reçu de {user.username}: {message}")
+                        if message:
+                            # Décoder la requête JSON
+                            query = json.loads(message)
+                            CORRoomBrowserQueriesWrapper.get_instance().handle(user.conn, query, user.addr)
+                            pass
+                            #TODO handle message
+                    except (ConnectionResetError, ConnectionAbortedError):
+                        self.disconnect_user(user)
 
 
     def __token_cleanup(self):
@@ -197,7 +199,6 @@ class UsersCollection:
                 return True
         return False
 
-
 class User():
 
     def __init__(self, username, token, addr):
@@ -205,6 +206,7 @@ class User():
         self.addr = addr
         self.username = username
         self.token = token
+        self.status = Status.INMENU
 
     def start_connection(self):
         conn, addr = UsersCollection.get_instance().__socket_room_browser.accept()

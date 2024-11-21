@@ -1,5 +1,10 @@
 import socket
 import json
+from enum import Enum
+
+class Status(Enum):
+    INMENU = 1
+    INGAME = 2
 
 def send_message_to(sock, client_address, type, message):
     messageJson = {"response": type, "message" : message}
