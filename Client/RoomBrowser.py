@@ -125,3 +125,30 @@ def get_rooms():
         return response
     except Exception as e:
         return {"response": "error", "message": str(e)}
+   
+    
+@eel.expose
+def join_room(room_id):
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        query = {
+            "type": "joinroom",
+            "data": {
+                "token": token,
+                "room_id": room_id
+            }
+        }
+
+        # Envoyer la requête au serveur
+        Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+
+        # Réception de la réponse
+        response_raw = Utils.TCP_SOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        return response
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
