@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from UsersManager import UsersCollection
+from Server.Users import UsersCollection
 from Room import RoomsCollection
 from HangmanLogic import Hangman
 import utils
