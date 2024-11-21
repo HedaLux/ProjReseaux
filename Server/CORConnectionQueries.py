@@ -3,7 +3,7 @@ import socket
 import threading
 import secrets
 import utils
-from Server.Users import *
+from Users import *
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
