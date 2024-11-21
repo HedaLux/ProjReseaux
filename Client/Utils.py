@@ -3,7 +3,7 @@ import socket
 import json
 
 TOKEN_PATH = "token.json"
-UDPSOCK = None
+UDP_SOCK = None
 TCP_SOCK = None
 
 def load_token():
@@ -18,9 +18,10 @@ def load_token():
     return False
 
 def initUDPSocket():
-    global UDPSOCK
-    if UDPSOCK == None:
-       UDPSOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    global UDP_SOCK
+    if UDP_SOCK == None:
+       UDP_SOCK = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+       print(UDP_SOCK)
 
 def save_token(token, servAddr, port):
     global TOKEN_PATH
@@ -30,9 +31,9 @@ def save_token(token, servAddr, port):
         json.dump(dataJson, file, indent=4)
 
 def close_UDP_sock():
-    global UDPSOCK
-    if not UDPSOCK == None:
-        UDPSOCK.close()
+    global UDP_SOCK
+    if not UDP_SOCK == None:
+        UDP_SOCK.close()
 
 def remove_token_file():
     try:

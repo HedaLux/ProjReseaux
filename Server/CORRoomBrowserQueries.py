@@ -62,7 +62,7 @@ class GetUserStatsQuery(RoomBrowserQueryHandler):
         #print("On est dans le maillon STATS \n")
         
         token = query["data"].get("token")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
@@ -89,7 +89,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
 
         room_id = query["data"].get("room_id")
         token = query["data"].get("token")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().__connected_users.get(token)
 
         if user is None:
@@ -118,7 +118,7 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
 
         token = query["data"].get("token")
         room_data = query["data"].get("room")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
@@ -155,7 +155,7 @@ class DisconnectQuery(RoomBrowserQueryHandler):
             return
 
         token = query["data"].get("token")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:

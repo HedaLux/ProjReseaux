@@ -4,11 +4,11 @@ import json
 from ConnectFrameFunc import *
 from RoomBrowser import *
 from Hangman import *
-from Utils import *
+import Utils
 
 
 def startGUI():
-    tokenData = load_token()
+    tokenData = Utils.load_token()
 
     eel.init("UI")
 
@@ -27,15 +27,15 @@ def startGUI():
             #TODO call JS func to send server list to GUI
             return
         print(f'{response["message"]}')
-        os.remove(TOKEN_PATH) # on delete le token dépassé
+        os.remove(Utils.TOKEN_PATH) # on delete le token dépassé
         eel.start("ConnectFrame.html", port=0)
         eel.notify_token_failure(response["message"])
         
 
 def try_to_reconnect(tokenData):
-    initUDPSocket()
+    Utils.initUDPSocket()
     
-    tokenData = load_token()
+    tokenData = Utils.load_token()
     token = tokenData["token"]
     server_address = tokenData["servAddr"]
     server_port = tokenData["port"]
@@ -50,10 +50,10 @@ def try_to_reconnect(tokenData):
     query_str = json.dumps(query)
 
     try:
-        UDPSOCK.sendto(query_str.encode(), (server_address, int(server_port)))
+        Utils.UDP_SOCK.sendto(query_str.encode(), (server_address, int(server_port)))
     except:
         pass
     
     print(f"message : {query} sent to {(server_address, int(server_port))}")
-    responseRaw = UDPSOCK.recv(1024).decode()
+    responseRaw = Utils.UDP_SOCK.recv(1024).decode()
     return json.loads(responseRaw)
