@@ -91,7 +91,7 @@ def create_room(room_data):
         Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
 
         # Réception de la réponse
-        response_raw = TCP_SOCK.recv(1024).decode()
+        response_raw = Utils.TCP_SOCK.recv(1024).decode()
         response = json.loads(response_raw)
 
         return response
