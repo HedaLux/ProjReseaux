@@ -6,28 +6,28 @@ Array.from(ipInputs).forEach((ipInput) => {
     const hiddenInput = ipInput.querySelector("input[name='server-ip']"); // Hidden input for server IP
 
     Array.from(inputs).forEach((input, index) => {
-        if (index === 0) return; // Skip the hidden input
+        if (index === 0) return;
 
         let temp = "";
 
-        // Save the old value in case the input is invalid
+        // Sauvegarde de l'ancienne valeur en cas d'entrée invalide
         input.addEventListener("focusin", (e) => {
             temp = e.target.value;
             e.target.value = "";
         });
 
-        // Restore old value if invalid
+        // Restaurer l'ancienne valeur si l'entrée est invalide
         input.addEventListener("focusout", (e) => {
             if (e.target.value === "" || !e.target.value.match(ipRegex)) {
                 e.target.value = temp;
             }
             temp = "";
 
-            // Update the hidden input with the new IP
+            // Mettre à jour le champ caché avec la nouvelle adresse IP
             updateHiddenInput();
         });
 
-        // Update the hidden input on valid changes
+        // Mettre à jour le champ caché après une modification valide
         input.addEventListener("change", (e) => {
             if (e.target.value === "" || !e.target.value.match(ipRegex)) return;
 
@@ -36,26 +36,26 @@ Array.from(ipInputs).forEach((ipInput) => {
             console.log("IP Updated: ", hiddenInput.value); // Debugging log
         });
 
-        // Auto-focus the next field if the current input is valid
+         // Auto-focus sur le champ suivant si l'entrée est valide
         input.addEventListener("input", (e) => {
             if (e.target.value.match(/^(1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
                 if (index < inputs.length - 1) {
                     inputs[index + 1].focus();
                 } else {
-                    e.target.blur(); // Final field, remove focus
+                    e.target.blur(); // Si c'est le dernier champ, perdre le focus
                 }
             }
         });
     });
 
-    // Function to update the hidden input value
+    // Fonction pour mettre à jour le champ caché avec l'adresse IP complète
     function updateHiddenInput() {
         const ipSegments = Array.from(inputs).slice(1).map((input) => input.value || "0");
         hiddenInput.value = ipSegments.join(".");
         console.log("Hidden IP value updated to: ", hiddenInput.value); // Debug log
     }
 
-    // Initialize the hidden input value on load
+    // Initialiser la valeur du champ caché au chargement de la page
     updateHiddenInput();
 });
 
