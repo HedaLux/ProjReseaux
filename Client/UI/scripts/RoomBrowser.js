@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetchUserStats(); // Appeler la récupération des stats
+    fetchRooms(); // Récupérer et afficher les salles existantes
 });
 
 function updateUsername(username) {
@@ -149,3 +150,94 @@ function fetchUserStats() {
         console.error("Erreur lors de l'appel à get_user_stats_ui : ", err);
     });
 }
+
+document.forms['create-room'].addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const form = e.target.elements;
+    const roomname = form['roomname'].value;
+    const gamemode = form['gamemode'].value;
+    const maxPlayers = gamemode === "multiplayer" ? form['player-count'].value : 1;
+    const rounds = form['round-count'].value;
+    const roundTime = form['round-time'].value;
+    const roundCooldown = form['round-cooldown'].value;
+
+    const roomData = {
+        roomname,
+        gamemode,
+        max_player: maxPlayers,
+        round_count: rounds,
+        round_duration: roundTime,
+        round_cooldown: roundCooldown,
+        no_tries: 6 // essais par default
+    };
+
+    eel.create_room(roomData)().then((res) => {
+        console.log("Réponse de la création de salle : ", res);
+        if (res.response === "success") {
+            addRoomToHTML(res.message); // Ajout dynamique de la salle
+        } else {
+            alert("Erreur lors de la création de la salle : " + res.message);
+        }
+    }).catch((err) => {
+        console.error("Erreur lors de la création de la salle : ", err);
+    });
+
+    document.getElementById("modal-create-room").classList.add("hidden");
+});
+
+function addRoomToHTML(room) {
+    const roomList = document.querySelector(".server-browser .data");
+    
+    const roomElement = document.createElement("div");
+    roomElement.className = "room";
+    roomElement.setAttribute("rid", room.room_id);
+
+    roomElement.innerHTML = `
+        <div>${room.access || "publique"}</div>
+        <div>${room.roomname}</div>
+        <div>${room.owner}</div>
+        <div>${room.players}/${room.max_players}</div>
+        <div>${room.rounds}</div>
+        <div>${room.status || "en attente de joueurs"}</div>
+    `;
+
+    roomList.appendChild(roomElement);
+
+    // Mettre à jour le compteur de salles
+    const roomCount = document.querySelector(".no-rooms");
+    roomCount.textContent = roomList.children.length;
+}
+
+function fetchRooms() {
+    eel.get_rooms()().then((response) => {
+        console.log("Liste des salles reçue : ", response);
+        if (response.response === "success") {
+            response.message.forEach(addRoomToHTML); // Affiche chaque salle dans le DOM
+        } else {
+            alert("Erreur lors de la récupération des salles : " + response.message);
+        }
+    }).catch((err) => {
+        console.error("Erreur lors de la récupération des salles : ", err);
+    });
+}
+
+document.querySelector(".refresh-button").addEventListener("click", () => {
+    console.log("Actualisation de la liste des salles...");
+    refreshRooms();
+});
+
+function refreshRooms() {
+    const roomList = document.querySelector(".server-browser .data");
+
+    // Vider la liste actuelle des salles
+    while (roomList.firstChild) {
+        roomList.removeChild(roomList.firstChild);
+    }
+
+    // Recharger les salles depuis le serveur
+    fetchRooms();
+}
+
+
+

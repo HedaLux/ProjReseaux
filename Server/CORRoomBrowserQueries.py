@@ -32,11 +32,25 @@ class GetRoomsQuery(RoomBrowserQueryHandler):
         if query["type"] != "getrooms":
             self._try_next(sock, query, client_address)
             return
-        
-        rooms = RoomsCollection.get_instance().rooms
-        room_list = [{"room_id": room_id, "owner": room.room_owner, "players": len(room.players), "max_players": room.max_player} for room_id, room in rooms.items()]
-        
-        utils.send_message_to(sock, client_address, "success", room_list)
+
+        # Récupérer toutes les salles existantes
+        rooms_collection = RoomsCollection.get_instance()
+        rooms_data = []
+
+        for room_id, room in rooms_collection.rooms.items():
+            rooms_data.append({
+                "room_id": room_id,
+                "roomname": room.roomname,
+                "owner": room.room_owner,
+                "players": len(room.players),
+                "max_players": room.max_player,
+                "rounds": room.round_count,
+                "status": room.room_status.name.lower()
+            })
+
+        # Envoyer les données au client
+        utils.send_message_to(sock, client_address, "success", rooms_data)
+
 
 
 class GetUserStatsQuery(RoomBrowserQueryHandler):
@@ -103,13 +117,15 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
 
         token = query["data"].get("token")
         room_data = query["data"].get("room")
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        from UsersManager import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
         room_id = RoomsCollection.get_instance().new_room(
+            roomname = room_data["roomname"],
             max_player=room_data["max_player"],
             round_count=room_data["round_count"],
             round_duration=room_data["round_duration"],
@@ -117,7 +133,19 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
             no_tries=room_data["no_tries"],
             room_owner=user.username
         )
-        utils.send_message_to(sock, client_address, "success", {"room_id": room_id})
+        # Ajouter les informations complètes de la salle dans la réponse
+        room = RoomsCollection.get_instance().get_room(room_id)
+        room_info = {
+            "room_id": room_id,
+            "roomname": room.roomname,
+            "owner": room.room_owner,
+            "players": len(room.players),
+            "max_players": room.max_player,
+            "rounds": room.round_count,
+            "status": room.room_status.name.lower()
+        }
+
+        utils.send_message_to(sock, client_address, "success", room_info)
 
 
 # Classe singleton pour construire la chaîne de responsabilité

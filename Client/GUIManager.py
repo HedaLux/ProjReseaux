@@ -233,6 +233,66 @@ def get_user_stats_ui():
         return {"response": "error", "message": str(e)}
 
 
+@eel.expose
+def create_room(room_data):
+    global TCP_SOCK
+
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        query = {
+            "type": "createroom",
+            "data": {
+                "token": token,
+                "room": room_data
+            }
+        }
+
+        # Envoi de la requête au serveur
+        TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+
+        # Réception de la réponse
+        response_raw = TCP_SOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        return response
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
+
+
+@eel.expose
+def get_rooms():
+    global TCP_SOCK
+
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        # Construire la requête pour récupérer les salles
+        query = {
+            "type": "getrooms",
+            "data": {
+                "token": token
+            }
+        }
+
+        # Envoyer la requête au serveur
+        TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+
+        # Réception de la réponse
+        response_raw = TCP_SOCK.recv(1024).decode()
+        response = json.loads(response_raw)
+
+        return response
+    except Exception as e:
+        return {"response": "error", "message": str(e)}
+
+
+
+
 
 
 
