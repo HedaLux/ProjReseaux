@@ -46,9 +46,10 @@ def get_user_stats(username):
         raise Exception(f"L'utilisateur {username} n'existe pas.")
     
     return user_DB[username].get("stats", {
-        "games_played": 0,
-        "wins": 0,
-        "losses": 0
+        "multiplayer_games_played": 0,
+        "multiplayer_wins": 0,
+        "solo_games_played": 0,
+        "solo_wins": 0
     })
 
 

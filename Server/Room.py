@@ -11,8 +11,9 @@ class RoomStatus(Enum):
     GAME_ENDED = 4
 
 class Room():
-    def __init__(self, room_id, max_player, round_count, round_duration, round_cooldown, no_tries, room_owner):
+    def __init__(self, room_id, roomname, max_player, round_count, round_duration, round_cooldown, no_tries, room_owner):
         self.room_id = room_id
+        self.roomname = roomname
         self.max_player = max_player
         self.round_count = round_count
         self.round_duration = round_duration
@@ -21,7 +22,7 @@ class Room():
         self.room_owner = room_owner
         self.current_round = 1
         self.room_status = RoomStatus.WAITING
-        self.players = {}
+        self.players = set()
         self.players.add(room_owner)
 
     def start_game(self, player):
@@ -83,9 +84,9 @@ class RoomsCollection():
             cls.__instance = RoomsCollection()
         return cls.__instance
 
-    def new_room(self, max_player, round_count, round_duration, round_cooldown, no_tries, room_owner):
+    def new_room(self, roomname, max_player, round_count, round_duration, round_cooldown, no_tries, room_owner):
         room_id = secrets.token_hex(self.ROOM_ID_SIZE)
-        room = Room(max_player, room_id, round_count, round_duration, round_cooldown, no_tries, room_owner)
+        room = Room(room_id, roomname, max_player, round_count, round_duration, round_cooldown, no_tries, room_owner)
         self.rooms[room_id] = room
         return room_id
 

@@ -87,3 +87,47 @@ registerBtn.addEventListener('click', e => {
 })
 
 document.getElementById("background-vid").playbackRate = 0.2;
+
+document.forms['connect-form'].addEventListener("submit", e => {
+    e.preventDefault();
+    
+    const form = e.target.elements;
+    const username = form['username'].value;
+    const password = form['password'].value;
+    const serverAddress = form['server-ip'].value;
+    const serverPort = form['server-port'].value;
+
+    eel.connect_to_server(username, password, serverAddress, serverPort)().then(res => {
+        console.log(res);
+        if (res["response"] === "error") {
+            alert(res["message"]);
+            return;
+        }
+        // Sauvegarder le nom d'utilisateur dans localStorage
+        localStorage.setItem("username", username);
+        window.location.href = "RoomBrowser.html";
+    });
+});
+
+document.forms['register-form'].addEventListener("submit", e => {
+    e.preventDefault();
+    
+    const form = e.target.elements;
+    const username = form['username'].value;
+    const password = form['password'].value;
+    const passwordConfirm = form['password-confirm'].value;
+    const serverAddress = form['server-ip'].value;
+    const serverPort = form['server-port'].value;
+
+    eel.connect_to_server(username, password, serverAddress, serverPort)().then(res => {
+        console.log(res);
+        if (res["response"] === "error") {
+            alert(res["message"]);
+            return;
+        }
+        // Sauvegarder le nom d'utilisateur dans localStorage
+        localStorage.setItem("username", username);
+        window.location.href = "RoomBrowser.html";
+    });
+});
+

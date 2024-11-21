@@ -2,6 +2,7 @@ import secrets
 import threading
 import time
 import socket
+from CORRoomBrowserQueries import CORRoomBrowserQueriesWrapper
 from utils import *
 from JSONDBFunctions import *
 from CORRoomBrowserQueries import CORRoomBrowserQueriesWrapper
@@ -51,6 +52,9 @@ class UsersCollection:
         if cls.__instance is None:
             cls.__instance = UsersCollection()
         return cls.__instance
+    
+    def get_connected_user(self, token):
+        return self.__connected_users.get(token)
 
     def __handle_room_browser_tcp_accept(self):
         while True:
@@ -63,6 +67,7 @@ class UsersCollection:
                 conn.setblocking(False)
 
                 for user in self.__waiting_to_connect_users.values():
+                    print(user.username + " attend la connection tcp \n")
                     if user.addr[0] == addr[0]:
                         user.addr = addr
                         user.conn = conn
@@ -72,6 +77,7 @@ class UsersCollection:
                         break
                 
                 if(not has_been_attributed):
+                    print(user.username + " has not been attributed ! \n")
                     conn.close()
                 else:
                     print(f"connected user = {self.__connected_users}")
@@ -83,10 +89,17 @@ class UsersCollection:
     def __handle_room_browser_messages(self):
         while True:
             # On lit les messages des utilisateurs connectés
-            for user in self.__connected_users.values():
+            # Ajout d'une copie ici pour éviter d'itérer dans une liste qui change de dimension
+            __connected_users_copy = self.__connected_users.copy()
+            for user in __connected_users_copy.values():
                 try:
                     message = recevoir_message(user.conn, user.addr)
                     if message:
+                        print(f"Message reçu de {user.username}: {message}")
+                    if message:
+                        # Décoder la requête JSON
+                        query = json.loads(message)
+                        CORRoomBrowserQueriesWrapper.get_instance().handle(user.conn, query, user.addr)
                         pass
                         #TODO handle message
                 except (ConnectionResetError, ConnectionAbortedError):
@@ -151,7 +164,21 @@ class UsersCollection:
             raise Exception("Utilisateur absent de la table des utilisateurs déconnectés")
 
     def get_user_token(self, username):
-        return self.__connected_users[username]["token"]
+        # Vérifier dans les utilisateurs connectés
+        if username in self.__connected_users:
+            return self.__connected_users[username]["token"]
+        
+        # Vérifier dans les utilisateurs en attente de connexion
+        if username in self.__waiting_to_connect_users:
+            return self.__waiting_to_connect_users[username]["token"]
+        
+        # Vérifier dans les utilisateurs déconnectés
+        if username in self.__disconnected_users:
+            return self.__disconnected_users[username]["token"]
+        
+        # Si non trouvé, lever une exception
+        raise KeyError(f"Utilisateur {username} introuvable dans toutes les listes.")
+
     
     def is_token_valid(self, token):
         for user in self.__disconnected_users:
