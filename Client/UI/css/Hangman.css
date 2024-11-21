@@ -1,0 +1,322 @@
+@font-face {
+    font-family: Lato;
+    src: url(/assets/Lato-Regular.ttf);
+}
+
+@font-face {
+    font-family: Itim;
+    src: url(/assets/Itim-Regular.ttf);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url("https://img.freepik.com/free-vector/crumpled-paper-texture_1048-2259.jpg?t=st=1730034932~exp=1730038532~hmac=cde1aafaeaee8590078c9485413be7d9c7cba3984716ee02cd298390835df51e&w=740");
+    font-family: "Lato", sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.main-container {
+    --margin: 2vw;
+    width: calc(100% - var(--margin));
+    height: calc(100% - var(--margin));
+    background-color: rgba(12, 12, 12, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: nowrap;
+    color: white;
+}
+
+.game-wrapper {
+    flex-grow:1;
+    padding: 20px;
+    display: flex;
+    position: relative;
+}
+
+#modal-game-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    border-radius: 5px;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#modal-game-wrapper div {
+    font-family: "Itim", sans-serif;
+    font-size: 1.4em;
+}
+
+#modal-game-wrapper span {
+    color: green;
+}
+
+button:hover {
+    filter: brightness(80%);
+}
+
+button:active {
+    filter: brightness(70%);
+}
+
+#modal-game-wrapper button {
+    border: 0px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    background: chartreuse;
+    color: black;
+    font-size: 1.4em;
+}
+
+.game-wrapper .left-bar {
+    width: fit-content;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-wrapper .left-bar .round-count {
+    font-family: "Itim", sans-serif;
+    font-size: 1.2em;
+}
+
+.game-wrapper #word {
+    font-size: 3em;
+    letter-spacing: 10px;
+}
+
+.game-wrapper .remaining {
+    font-size: 1.5em;
+    font-family: "Itim", sans-serif;
+}
+
+.game-wrapper #tries-left {
+    color: chartreuse;
+}
+
+.game-wrapper > .game-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    gap: 10px;
+}
+
+.game-wrapper > .game-content > * {
+    min-height: 50px;
+}
+
+.game-wrapper .keyboard {
+    --gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 50%;
+}
+
+.game-wrapper .keyboard > * {
+    width: calc((100% - var(--gap) * 9) / 9);
+    aspect-ratio: 1/1;
+    text-transform: capitalize;
+    font-size: 1.5em;
+    border: 0px solid white;
+    cursor: pointer;
+    font-family:"Lato", sans-serif;
+}
+
+.game-wrapper .keyboard > *:not(:disabled):hover {
+    filter: brightness(0.9);
+}
+
+.game-wrapper .keyboard > *:not(:disabled):active {
+    filter: brightness(0.7);
+}
+
+.game-wrapper .keyboard > *:disabled {
+    cursor: not-allowed;
+}
+
+.game-wrapper .keyboard > *:disabled.valid {
+    background: chartreuse;
+    color: black;
+}
+
+.game-wrapper .keyboard > *:disabled.invalid {
+    background: red;
+    color: black;
+}
+
+.room-info {
+    max-width: 30%;
+    height: calc(100% - 40px);
+    box-sizing: padding-box;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border-left: 6px solid rgba(255,255,255,0.1);
+    padding: 0 20px;
+    align-self: center;
+    align-items: center;
+}
+
+.room-info .title {
+    font-family: "Itim", sans-serif;
+    font-size: 1.2em;
+    text-align: center;
+    border-bottom: 2px solid white;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    background: #3d3d3d;
+}
+
+.room-info .player-list-wrapper,
+.room-info .tchat-wrapper {
+    background: rgba(190,190,190, 0.4);
+    backdrop-filter: blur(4px);
+    color: white;
+    border-radius: 10px;
+    padding-bottom: 10px;
+    overflow: hidden;
+    width: 100%;
+}
+
+#player-list, #tchat {
+    margin: 0 10px;
+}
+
+#tchat {
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#player-list {
+    min-height: 80px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#tchat .message > .playername {
+    color: chartreuse;
+}
+
+#tchat .message.server {
+    color: orange;
+}
+
+#send-message {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    margin-top: 10px;
+}
+
+#leave-room {
+    border: 0px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    background: red;
+    color: white;
+}
+
+
+
+
+
+
+
+.timer {
+    position: relative;
+    --width: 100px;
+    width: var(--width);
+    aspect-ratio: 1/1;
+}
+
+.timer-circle {
+    position: absolute;
+    width: var(--width);
+    aspect-ratio: 1/1;
+    transform: rotate(-90deg);
+}
+
+circle {
+    fill: none;
+    stroke-width: 10;
+}
+
+.bg {
+    stroke: chartreuse;
+}
+
+.bg.end-of-timer {
+    transition: 10s;
+    stroke: red;
+}
+
+.progress {
+    stroke: white;
+    stroke-dasharray: 283; /* Circumference of the circle */
+    stroke-dashoffset: 283; /* Initial offset for 0% progress */
+    animation: progress-animation linear forwards;
+}
+
+@keyframes progress-animation {
+    from {
+        stroke-dashoffset: 283; /* Départ au complet */
+    }
+    to {
+        stroke-dashoffset: 0; /* Fin à 0, cercle rempli */
+    }
+}
+
+.timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1em;
+    font-weight: bold;
+    transition: 0.5s;
+}
+
+.timer-text.tick {
+    animation: 1s linear infinite tickanim;
+}
+
+@keyframes tickanim {
+    0% {
+        color: red;
+        font-size: 1.4em;
+    }
+    50% {
+        color: white;
+        font-size: 1em;
+    }
+}

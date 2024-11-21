@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="css/Hangman.css">
+        <script type="text/javascript" src="/eel.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,300,0,0" />
+        <link rel="icon" type="image/png" href="assets/hangman-game.png">
+        <title>Le jeu du pendu</title>
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="game-wrapper">
+                <div id="modal-game-wrapper" class="">
+                    <div id="round-starting-message" class="hidden">Le round <span id="modal-round-number"></span> va commencer dans : <span id="cooldown-timer"></span></div>
+                    <div id="game-waiting-message" class="">En attente de lancement</div>
+                    <button id="start-game" class="">lancer la partie</button>
+                </div>
+                <div class="left-bar">
+                    <div class="timer">
+                        <svg class="timer-circle" viewBox="0 0 100 100">
+                            <circle class="bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="progress" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div class="timer-text" id="timer-text"></div>
+                    </div>
+                    <div class="round-count">Round <span id="current-round"></span>/<span id="last-round"></span> </div>
+                </div>
+                <div class="game-content">
+                    <div id="word"></div>
+                    <div class="remaining">Il vous reste <span id="tries-left"></span> essais restant</div>
+                    <div class="keyboard" id="keyboard">
+                        <button class="" value="a">a</button>
+                        <button class="" value="b">b</button>
+                        <button class="" value="c">c</button>
+                        <button class="" value="d">d</button>
+                        <button class="" value="e">e</button>
+                        <button class="" value="f">f</button>
+                        <button class="" value="g">g</button>
+                        <button class="" value="h">h</button>
+                        <button class="" value="i">i</button>
+                        <button class="" value="j">j</button>
+                        <button class="" value="k">k</button>
+                        <button class="" value="l">l</button>
+                        <button class="" value="m">m</button>
+                        <button class="" value="n">n</button>
+                        <button class="" value="o">o</button>
+                        <button class="" value="p">p</button>
+                        <button class="" value="q">q</button>
+                        <button class="" value="r">r</button>
+                        <button class="" value="s">s</button>
+                        <button class="" value="t">t</button>
+                        <button class="" value="y">u</button>
+                        <button class="" value="v">v</button>
+                        <button class="" value="w">w</button>
+                        <button class="" value="x">x</button>
+                        <button class="" value="y">y</button>
+                        <button class="" value="z">z</button>
+                    </div>
+                </div>
+            </div>
+            <div class="room-info">
+                <div class="player-list-wrapper">
+                    <div class="title">Liste des joueurs</div>
+                    <div id="player-list">
+                        
+                    </div>
+                </div>
+                <div class="tchat-wrapper">
+                    <div class="title">Tchat</div>
+                    <div id="tchat">
+                        
+                    </div>
+                    <input type="text" id="send-message"/>
+                </div>
+                <div>
+                    <button value="quitter" id="leave-room">quitter la partie</button>
+                </div>
+            </div>
+        
+        </div>
+    </body>
+</html>
+
+<script src="scripts/Hangman.js" defer></script>
+
+<script>
+    const leaveButton = document.getElementById("leave-room")
+    const tchat = document.getElementById("tchat")
+    const sendMessage = document.getElementById("send-message")
+    const playerList = document.getElementById("player-list")
+    const wordState = document.getElementById("word")
+    const triesLeft = document.getElementById("tries-left")
+    const keyboard = document.getElementById("keyboard")
+    const keyboardButtons = keyboard.getElementsByTagName("button")
+    const currentRound = document.getElementById("current-round")
+    const lastRound = document.getElementById("last-round")
+    
+    function resetKeyboard() {
+        Array.from(keyboardButtons).forEach((button) => {
+            if(button.classList.contains("valid"))
+                button.classList.remove("valid")
+            if(button.classList.contains("invalid"))
+                button.classList.remove("invalid")
+            if(button.disabled == true)
+                button.disabled = false
+        })
+    }
+    
+    resetKeyboard()
+    
+    Array.from(keyboardButtons).forEach((button) => {
+        button.addEventListener("click", e => {
+            e.target.disabled = true
+            const letter = e.target.value
+            guessLetter(letter)
+        })
+    })
+    
+    window.addEventListener("keyup", (e) => {
+        if (document.activeElement.tagName != "INPUT") {
+            if (e.key.match(/[a-z]/)) {
+                const letter = e.key
+                guessLetter(letter)
+            }
+        }
+    });
+    
+    function guessLetter(key) {
+        // appeler la fonction eel correspondante
+    }
+    
+    function setWordState(word) {
+        wordState.innerHTML = word
+    }
+    
+</script>
