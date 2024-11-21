@@ -13,22 +13,22 @@ def startGUI():
     eel.init("UI")
 
     if(tokenData == False):
-        eel.start("ConnectFrame.html")
+        eel.start("ConnectFrame.html", port=0)
     else:
         response = try_to_reconnect(tokenData)
         if(response["message"] == "inGame"):
             #TODO init TCP socket and get game data
-            eel.start("Game.html")
+            eel.start("Game.html", port=0)
             #TODO call JS func to send game data to GUI
             return
         if(response["message"] == "inMenu"):
             #TODO init TCP socket and get server list
-            eel.start("RoomBrowser.html")
+            eel.start("RoomBrowser.html", port=0)
             #TODO call JS func to send server list to GUI
             return
         print(f'{response["message"]}')
         os.remove(TOKEN_PATH) # on delete le token dépassé
-        eel.start("ConnectFrame.html")
+        eel.start("ConnectFrame.html", port=0)
         eel.notify_token_failure(response["message"])
         
 
