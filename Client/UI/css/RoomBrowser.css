@@ -10,6 +10,7 @@
 
 html, body {
     background: url(/assets/bg-pic.jpg);
+    backdrop-filter: brightness(80%);
     font-family: "Lato", sans-serif;
     margin: 0;
     padding: 0;
