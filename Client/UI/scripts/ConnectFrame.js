@@ -1,60 +1,64 @@
-const ipInputs = document.getElementsByClassName("ip-input")
-const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
+const ipInputs = document.getElementsByClassName("ip-input");
+const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/;
 
 Array.from(ipInputs).forEach((ipInput) => {
-    inputs = ipInput.getElementsByTagName("input")
-    
+    const inputs = ipInput.getElementsByTagName("input");
+    const hiddenInput = ipInput.querySelector("input[name='server-ip']"); // Hidden input for server IP
+
     Array.from(inputs).forEach((input, index) => {
-        if(index == 0)
-            return;
-        
-        let temp = ""
-        
-        input.addEventListener('focusin', e => {
-            temp = e.target.value
-            e.target.value = ""
-        })
-        
-        input.addEventListener('focusout', e => {
-            if(e.target.value == "" || !e.target.value.match(ipRegex))
-                e.target.value = temp
-            temp = ""
-        })
-        
-        input.addEventListener("change", e => {
-            if(e.target.value == "" || !e.target.value.match(ipRegex))
-                return
-            
-            ip = inputs[0].value
-            ipSplitted = ip.split('.')
-            ipSplitted[index-1] = e.target.value
-            inputs[0].value = ipSplitted.join('.')
-        })
-        
-        
-        input.addEventListener("input", e => {
-            if(e.target.value.match(/^(1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-                if(index < (Array.from(inputs).length - 1)) {
-                    const parent = e.target.parentNode
-                    const siblingInputs = parent.getElementsByTagName('input')
-                    const nextSibling = Array.from(siblingInputs)[index+1]
-                    
-                    nextSibling.focus()
-                    console.log(nextSibling)
+        if (index === 0) return;
+
+        let temp = "";
+
+        // Sauvegarde de l'ancienne valeur en cas d'entrée invalide
+        input.addEventListener("focusin", (e) => {
+            temp = e.target.value;
+            e.target.value = "";
+        });
+
+        // Restaurer l'ancienne valeur si l'entrée est invalide
+        input.addEventListener("focusout", (e) => {
+            if (e.target.value === "" || !e.target.value.match(ipRegex)) {
+                e.target.value = temp;
+            }
+            temp = "";
+
+            // Mettre à jour le champ caché avec la nouvelle adresse IP
+            updateHiddenInput();
+        });
+
+        // Mettre à jour le champ caché après une modification valide
+        input.addEventListener("change", (e) => {
+            if (e.target.value === "" || !e.target.value.match(ipRegex)) return;
+
+            const ipSegments = Array.from(inputs).slice(1).map((input) => input.value || "0");
+            hiddenInput.value = ipSegments.join(".");
+            console.log("IP Updated: ", hiddenInput.value); // Debugging log
+        });
+
+         // Auto-focus sur le champ suivant si l'entrée est valide
+        input.addEventListener("input", (e) => {
+            if (e.target.value.match(/^(1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
                 } else {
-                    //const portInput = input.parentElement.getElementBy
-                    
-                    e.target.blur()
-                }
-            } else {
-                if(!e.target.value.match(ipRegex)){
-                    e.target.blur()
-                    e.target.focus()
+                    e.target.blur(); // Si c'est le dernier champ, perdre le focus
                 }
             }
-        })
-    })
-})
+        });
+    });
+
+    // Fonction pour mettre à jour le champ caché avec l'adresse IP complète
+    function updateHiddenInput() {
+        const ipSegments = Array.from(inputs).slice(1).map((input) => input.value || "0");
+        hiddenInput.value = ipSegments.join(".");
+        console.log("Hidden IP value updated to: ", hiddenInput.value); // Debug log
+    }
+
+    // Initialiser la valeur du champ caché au chargement de la page
+    updateHiddenInput();
+});
+
 
 
 const connectBtn = document.getElementById("connect-btn")
