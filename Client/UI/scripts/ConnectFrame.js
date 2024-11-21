@@ -90,8 +90,6 @@ registerBtn.addEventListener('click', e => {
     registerForm.classList.remove("hidden")
 })
 
-document.getElementById("background-vid").playbackRate = 0.2;
-
 document.forms['connect-form'].addEventListener("submit", e => {
     e.preventDefault();
     

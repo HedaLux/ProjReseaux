@@ -13,7 +13,7 @@
 }
 
 body {
-    background-image: url("https://img.freepik.com/free-vector/crumpled-paper-texture_1048-2259.jpg?t=st=1730034932~exp=1730038532~hmac=cde1aafaeaee8590078c9485413be7d9c7cba3984716ee02cd298390835df51e&w=740");
+    background: url(/assets/bg-pic.jpg);
     font-family: "Lato", sans-serif;
     margin: 0;
     display: flex;

@@ -18,10 +18,6 @@ function updateUsername(username) {
     document.querySelector(".greetings span").textContent = username; // Modifier le DOM
 }
 
-
-
-document.getElementById("background-vid").playbackRate = 0.2;
-
 const serverBrowsers = document.getElementsByClassName("server-browser")
 
 
