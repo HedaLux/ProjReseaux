@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from UsersManager import *
+from UsersManager import UsersCollection
 from Room import RoomsCollection
 import utils
 

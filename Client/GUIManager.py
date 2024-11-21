@@ -102,6 +102,8 @@ def connect_to_server(username, password, server_address, server_port):
 
     print(f"reponse['message'] = {response['message']}")
 
+    tcp_sock_port = response["message"]["port"]
+
     tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcp_sock.connect((server_address, response["message"]["port"]))
 

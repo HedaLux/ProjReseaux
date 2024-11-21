@@ -4,6 +4,7 @@ import time
 import socket
 from utils import *
 from JSONDBFunctions import *
+from CORRoomBrowserQueries import CORRoomBrowserQueriesWrapper
 
 class UsersCollection:
     __instance = None
