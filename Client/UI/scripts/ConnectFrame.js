@@ -1,60 +1,64 @@
-const ipInputs = document.getElementsByClassName("ip-input")
-const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
+const ipInputs = document.getElementsByClassName("ip-input");
+const ipRegex = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/;
 
 Array.from(ipInputs).forEach((ipInput) => {
-    inputs = ipInput.getElementsByTagName("input")
-    
+    const inputs = ipInput.getElementsByTagName("input");
+    const hiddenInput = ipInput.querySelector("input[name='server-ip']"); // Hidden input for server IP
+
     Array.from(inputs).forEach((input, index) => {
-        if(index == 0)
-            return;
-        
-        let temp = ""
-        
-        input.addEventListener('focusin', e => {
-            temp = e.target.value
-            e.target.value = ""
-        })
-        
-        input.addEventListener('focusout', e => {
-            if(e.target.value == "" || !e.target.value.match(ipRegex))
-                e.target.value = temp
-            temp = ""
-        })
-        
-        input.addEventListener("change", e => {
-            if(e.target.value == "" || !e.target.value.match(ipRegex))
-                return
-            
-            ip = inputs[0].value
-            ipSplitted = ip.split('.')
-            ipSplitted[index-1] = e.target.value
-            inputs[0].value = ipSplitted.join('.')
-        })
-        
-        
-        input.addEventListener("input", e => {
-            if(e.target.value.match(/^(1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
-                if(index < (Array.from(inputs).length - 1)) {
-                    const parent = e.target.parentNode
-                    const siblingInputs = parent.getElementsByTagName('input')
-                    const nextSibling = Array.from(siblingInputs)[index+1]
-                    
-                    nextSibling.focus()
-                    console.log(nextSibling)
+        if (index === 0) return; // Skip the hidden input
+
+        let temp = "";
+
+        // Save the old value in case the input is invalid
+        input.addEventListener("focusin", (e) => {
+            temp = e.target.value;
+            e.target.value = "";
+        });
+
+        // Restore old value if invalid
+        input.addEventListener("focusout", (e) => {
+            if (e.target.value === "" || !e.target.value.match(ipRegex)) {
+                e.target.value = temp;
+            }
+            temp = "";
+
+            // Update the hidden input with the new IP
+            updateHiddenInput();
+        });
+
+        // Update the hidden input on valid changes
+        input.addEventListener("change", (e) => {
+            if (e.target.value === "" || !e.target.value.match(ipRegex)) return;
+
+            const ipSegments = Array.from(inputs).slice(1).map((input) => input.value || "0");
+            hiddenInput.value = ipSegments.join(".");
+            console.log("IP Updated: ", hiddenInput.value); // Debugging log
+        });
+
+        // Auto-focus the next field if the current input is valid
+        input.addEventListener("input", (e) => {
+            if (e.target.value.match(/^(1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)) {
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
                 } else {
-                    //const portInput = input.parentElement.getElementBy
-                    
-                    e.target.blur()
-                }
-            } else {
-                if(!e.target.value.match(ipRegex)){
-                    e.target.blur()
-                    e.target.focus()
+                    e.target.blur(); // Final field, remove focus
                 }
             }
-        })
-    })
-})
+        });
+    });
+
+    // Function to update the hidden input value
+    function updateHiddenInput() {
+        const ipSegments = Array.from(inputs).slice(1).map((input) => input.value || "0");
+        hiddenInput.value = ipSegments.join(".");
+        console.log("Hidden IP value updated to: ", hiddenInput.value); // Debug log
+    }
+
+    // Initialize the hidden input value on load
+    updateHiddenInput();
+});
+
 
 
 const connectBtn = document.getElementById("connect-btn")
