@@ -8,13 +8,17 @@
     src: url(/assets/Itim-Regular.ttf);
 }
 
-html, body {
+body {
     background: url(/assets/bg-pic.jpg);
     backdrop-filter: brightness(80%);
     font-family: "Lato", sans-serif;
     margin: 0;
-    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
+
 
 * {
     box-sizing: content-box;
