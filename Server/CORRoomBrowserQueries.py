@@ -106,6 +106,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Salle pleine")
             return
 
+        user.status = utils.Status.INGAME
         room.addPlayer(user)
         utils.send_message_to(sock, client_address, "success", f"Connecté à la salle {room_id}")
         self.notify_all_players_in_room(
@@ -148,6 +149,8 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
+
+        user.status = utils.Status.INGAME
 
         room_id = RoomsCollection.get_instance().new_room(
             roomname = room_data["roomname"],
@@ -211,9 +214,11 @@ class DisconnectQuery(RoomBrowserQueryHandler):
 
         # Supprimer l'utilisateur des utilisateurs connectés
         UsersCollection.get_instance().remove_user(token)
-
+        user.status = utils.Status.INMENU
+        
         # Répondre avec succès
         utils.send_message_to(sock, client_address, "success", "Déconnexion réussie")
+        
 
 
 

@@ -277,6 +277,10 @@
         tchat.appendChild(newElement)
     }
 
+    startGameButton.addEventListener("click", e => {
+        eel.start_game()
+    })
+
     eel.start_message_handling_thread()
     
 </script>
