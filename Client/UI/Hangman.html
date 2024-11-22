@@ -117,9 +117,12 @@
         if (document.activeElement.tagName != "INPUT") {
             if (e.key.match(/[a-z]/)) {
                 const letter = e.key
-                
-                
-                guessLetter(letter)
+                Array.from(keyboardButtons).forEach((button) => {
+                    if(button.value == key && button.disabled == false) {
+                        button.disabled = true
+                        guessLetter(letter)
+                    }
+                })
             }
         }
     });
