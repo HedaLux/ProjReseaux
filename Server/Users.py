@@ -146,6 +146,7 @@ class UsersCollection:
     
     # fonction pour la déconnexion non naturelle (crash, exctinction du pc, ...)
     def disconnect_user(self, user):
+        user.conn = None
         self.__connected_users.pop(user.token)
         self.__disconnected_users[user.token] = user
 
@@ -172,8 +173,8 @@ class UsersCollection:
             }
         del self.__connected_users[username]"""
 
-    def reconnect_user(self, username):
-        if(username not in self.__disconnected_users):
+    def reconnect_user(self, user):
+        if(user.token not in self.__disconnected_users):
             raise Exception("Utilisateur absent de la table des utilisateurs déconnectés")
 
     def get_user_token(self, username):

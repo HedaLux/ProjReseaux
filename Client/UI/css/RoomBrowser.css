@@ -19,7 +19,6 @@ body {
     height: 100vh;
 }
 
-
 * {
     box-sizing: content-box;
 }
@@ -129,14 +128,6 @@ body {
     --playercount-w: 14%;
     --roundcount-w: 14%;
     --status-w: 20%;
-}
-
-.main-wrapper > .wrapper-content > .server-browser-wrapper > .server-browser > * {
-    /*padding: 0 15px;*/
-}
-
-.main-wrapper > .wrapper-content > .server-browser-wrapper > .server-browser button {
-    
 }
 
 .main-wrapper > .wrapper-content > .server-browser-wrapper > .server-browser > .head-info {

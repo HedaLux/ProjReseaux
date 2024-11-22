@@ -37,3 +37,25 @@ def recevoir_message(sock, addr):
     except BlockingIOError:
         # Pas encore assez de données reçues
         return None
+
+buffers_room = {}
+
+def recevoir_message_room(sock, addr, room_id):
+    global buffers_room
+    
+    if(addr not in buffers_room[room_id]):
+        buffers_room[room_id][addr] = b""
+
+    try:
+        while True:
+            data = sock.recv(1024)
+            if not data:
+                return None
+            buffers_room[room_id][addr] += data
+            # Vérifier si le séparateur '\n' est présent dans le buffer
+            if b'\n' in buffers_room[room_id][addr]:
+                message_complet, buffers_room[room_id][addr] = buffers_room[room_id][addr].split(b'\n', 1)
+                return message_complet.decode('utf-8')
+    except BlockingIOError:
+        # Pas encore assez de données reçues
+        return None
