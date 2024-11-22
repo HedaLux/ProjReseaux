@@ -172,6 +172,7 @@ document.forms['create-room'].addEventListener("submit", (e) => {
         console.log("Réponse de la création de salle : ", res);
         if (res.response === "success") {
             addRoomToHTML(res.message); // Ajout dynamique de la salle
+            window.location.href = "Hangman.html";
         } else {
             alert("Erreur lors de la création de la salle : " + res.message);
         }
@@ -203,6 +204,49 @@ function addRoomToHTML(room) {
     // Mettre à jour le compteur de salles
     const roomCount = document.querySelector(".no-rooms");
     roomCount.textContent = roomList.children.length;
+
+    // Ajouter l'écouteur pour sélectionner la salle
+    roomElement.addEventListener("click", (e) => {
+        selectRoom(roomElement);
+    });
+}
+
+document.querySelector("#join-game").addEventListener("click", () => {
+    const selectedRoom = document.querySelector(".room.selected");
+
+    if (!selectedRoom) {
+        alert("Veuillez sélectionner une salle !");
+        return;
+    }
+
+    const roomId = selectedRoom.getAttribute("rid");
+    console.log("Tentative de rejoindre la salle avec ID :", roomId);
+
+    eel.join_room(roomId)().then((response) => {
+        if (response.response === "success") {
+            console.log("Rejoint la salle :", response.message);
+            
+            window.location.href = "Hangman.html";
+        } else {
+            alert("Erreur lors de la tentative de rejoindre la salle : " + response.message);
+        }
+    }).catch((err) => {
+        console.error("Erreur lors de la tentative de rejoindre la salle :", err);
+    });
+});
+
+
+// Fonction pour gérer la sélection d'une salle
+function selectRoom(roomElement) {
+    const joinButton = document.querySelector("#join-game");
+    const selectedRoom = document.querySelector(".room.selected");
+
+    if (selectedRoom) {
+        selectedRoom.classList.remove("selected");
+    }
+
+    roomElement.classList.add("selected");
+    joinButton.classList.remove("hidden");
 }
 
 function fetchRooms() {

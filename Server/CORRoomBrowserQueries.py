@@ -90,7 +90,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
         room_id = query["data"].get("room_id")
         token = query["data"].get("token")
         from Users import UsersCollection
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
@@ -101,7 +101,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Salle introuvable")
             return
 
-        if len(room.players) >= room.max_player:
+        if len(room.players) >= int(room.max_player):
             utils.send_message_to(sock, client_address, "error", "Salle pleine")
             return
 
