@@ -171,6 +171,29 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
         }
 
         utils.send_message_to(sock, client_address, "success", room_info)
+        self.notify_all_players_in_room(
+            room,
+            "player_joined",
+            {"username": user.username, "players": [p.username for p in room.players.values()]}
+        )
+
+    def notify_all_players_in_room(self, room, message_type, data):
+    # Créez le message une fois au début
+        message = {
+            "type": message_type,
+            "data": data
+        }
+        print(f"Message à envoyer à tous les joueurs dans la salle {room.roomname}: {message}\n")
+
+        for player in room.players.values():
+            if player.conn is not None:
+                try:
+                    # Envoi du message
+                    print(f"Message à envoyer  {player.username}: {message}\n")
+                    player.conn.sendall((json.dumps(message) + '\n').encode())
+                except Exception as e:
+                    print(f"Erreur d'envoi au joueur {player.username}: {e}")
+
 
 class DisconnectQuery(RoomBrowserQueryHandler):
     def handle(self, sock, query, client_address):

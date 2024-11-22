@@ -122,3 +122,21 @@ def send_chat_message(message):
         print(f"Erreur lors de l'envoi du message de chat : {str(e)}")
 
 
+@eel.expose
+def start_game():
+    try:
+        with open("token.json", "r") as token_file:
+            token_data = json.load(token_file)
+            token = token_data["token"]
+
+        query = {
+            "type": "startgame",
+            "data": {
+                "token": token
+            }
+        }
+
+        Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+        print("Requête pour démarrer la partie envoyée.")
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de la requête pour démarrer la partie : {str(e)}")

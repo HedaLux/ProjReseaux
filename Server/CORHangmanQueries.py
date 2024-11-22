@@ -175,14 +175,34 @@ class StartGameQuery(HangmanQueryHandler):
         token = query["data"].get("token")
         room_id = query["data"].get("room-id")
 
+        if not token or not room_id:
+            utils.send_message_to(sock, client_address, "error", "Token ou ID de salle manquant")
+            return
+
         from Room import RoomsCollection
 
-        player = RoomsCollection.get_room(room_id).get_player(token)
+        # Récupération de la salle
+        room = RoomsCollection.get_instance().get_room(room_id)
+        if not room:
+            utils.send_message_to(sock, client_address, "error", f"Salle avec ID {room_id} introuvable")
+            return
 
-        RoomsCollection.get_room(room_id).start_game(player)
+        # Vérification que le joueur est bien le propriétaire
+        player = room.players.get(token)
+        if not player:
+            utils.send_message_to(sock, client_address, "error", f"Joueur avec token {token} non trouvé dans la salle")
+            return
 
-        utils.send_message_to(sock, client_address, "success", f"Vous avez quitté la salle {room_id}")
+        if player != room.room_owner:
+            utils.send_message_to(sock, client_address, "error", "Seul le propriétaire de la salle peut démarrer la partie")
+            return
 
+        # Démarrage de la partie
+        try:
+            room.start_game(player)
+            utils.send_message_to(sock, client_address, "success", "La partie a commencé")
+        except Exception as e:
+            utils.send_message_to(sock, client_address, "error", f"Erreur lors du démarrage de la partie : {str(e)}")
 
 # Classe singleton pour construire la chaîne de responsabilité
 class CORHangmanQueriesWrapper:
@@ -203,6 +223,7 @@ class CORHangmanQueriesWrapper:
         self.__head = GameStateQuery(self.__head)
         self.__head = LeaveRoomQuery(self.__head)
         self.__head = ChatMessageQuery(self.__head)
+        self.__head = StartGameQuery(self.__head)
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
