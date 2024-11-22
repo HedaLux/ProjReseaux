@@ -1,9 +1,9 @@
-words = {"python"}
+from HangmanWords import words, get_random_word
 
 class Hangman():
 
     def __init__(self, players, nb_tries):
-        self.word = self.getRandomWord()
+        self.word = get_random_word()
         self.players_state = {}
         self.nb_tries = nb_tries
         for player in players:
