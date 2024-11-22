@@ -86,10 +86,12 @@ class CORServerQueriesWrapper():
         self.__head.handle(message)
 
     def __init__(self):
-        self.__head = LoginQuery()
-        self.__head = RegisterQuery(self.__head)
-        self.__head = LogoutQuery(self.__head)
-        self.__head = ReconnectQuery(self.__head)
+        self.__head = UserJoinedRoom()
+        self.__head = UserLeftRoom(self.__head)
+        self.__head = GuessWordRes(self.__head)
+        self.__head = MessageReceived(self.__head)
+        self.__head = RoomStateChange(self.__head)
+        self.__head = RoomInfo(self.__head)
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
