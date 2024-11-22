@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from Room import RoomsCollection
 import utils
 from JSONDBFunctions import get_user_stats
+import json
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
@@ -107,6 +108,29 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
 
         room.addPlayer(user)
         utils.send_message_to(sock, client_address, "success", f"Connecté à la salle {room_id}")
+        self.notify_all_players_in_room(
+            room,
+            "player_joined",
+            {"username": user.username, "players": [p.username for p in room.players.values()]}
+        )
+
+    def notify_all_players_in_room(self, room, message_type, data):
+    # Créez le message une fois au début
+        message = {
+            "type": message_type,
+            "data": data
+        }
+        print(f"Message à envoyer à tous les joueurs dans la salle {room.roomname}: {message}\n")
+
+        for player in room.players.values():
+            if player.conn is not None:
+                try:
+                    # Envoi du message
+                    print(f"Message à envoyer  {player.username}: {message}\n")
+                    player.conn.sendall(json.dumps(message).encode())
+                except Exception as e:
+                    print(f"Erreur d'envoi au joueur {player.username}: {e}")
+
 
 
 # Maillon pour créer une salle

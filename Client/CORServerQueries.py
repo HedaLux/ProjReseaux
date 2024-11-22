@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import eel
+
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
     def __init__(self, message):
@@ -69,6 +71,18 @@ class RoomInfo(QueryHandler):
             self._try_next(query)
             return
         
+class UpdatePlayerListQuery(QueryHandler):
+    def handle(self, query):
+        if query["type"] not in ["player_joined", "player_left"]:
+            self._try_next(query)
+            return
+
+
+        players = query["data"]["players"]
+        print("caba")
+        eel.update_player_list(players)  # Fonction exposée côté JS pour mettre à jour l'interface
+
+        
 
 # Classe singleton qui permet de construire une seule fois la chaine de responsabilité
 class CORServerQueriesWrapper():
@@ -92,6 +106,8 @@ class CORServerQueriesWrapper():
         self.__head = MessageReceived(self.__head)
         self.__head = RoomStateChange(self.__head)
         self.__head = RoomInfo(self.__head)
+        self.__head = UpdatePlayerListQuery(self.__head)
+        print("COR ServerQueries initi \n")
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:

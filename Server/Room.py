@@ -42,14 +42,19 @@ class Room():
 
     def handle_players_message(self):
         while not self.stop_event.is_set():
-            for player in self.players.values():
+            players_copy = list(self.players.values())
+            for player in players_copy:
                 if(not player.status == Status.INGAME):
                     pass
                 if(not player.conn == None):
                     message = self.read_player_message(player)
+                    
                     if message is None:
-                        #print("Message NONE Room.py\n")
                         continue
+                    print(f"Lecture du message pour le joueur {player.username}")
+                    print("message handlePlayerMessages : ")
+                    print(message)
+                    print("\n")
                     query = json.loads(message)
                     CORHangmanQueriesWrapper.get_instance().handle(player.conn, query, player.addr)
 

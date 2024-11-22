@@ -1,6 +1,21 @@
 from abc import ABC, abstractmethod
 from HangmanLogic import Hangman
 import utils
+import json
+
+def notify_all_players_in_room(room, message_type, data):
+    #import Room
+    for player in room.players.values():
+        if player.conn is not None:
+            try:
+                message = {
+                    "type": message_type,
+                    "data": data
+                }
+                player.conn.sendall(json.dumps(message).encode())
+            except Exception as e:
+                print(f"Erreur d'envoi au joueur {player.username}: {e}")
+
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
