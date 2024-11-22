@@ -127,7 +127,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
                 try:
                     # Envoi du message
                     print(f"Message à envoyer  {player.username}: {message}\n")
-                    player.conn.sendall(json.dumps(message).encode())
+                    player.conn.sendall((json.dumps(message) + '\n').encode())
                 except Exception as e:
                     print(f"Erreur d'envoi au joueur {player.username}: {e}")
 
