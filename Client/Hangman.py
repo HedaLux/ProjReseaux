@@ -3,6 +3,7 @@ import json
 import Utils
 import threading
 import time
+from CORServerQueries import CORServerQueriesWrapper
 
 @eel.expose
 def start_message_handling_thread():
@@ -12,9 +13,28 @@ def start_message_handling_thread():
 
 def server_message_handler():
     while not Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.is_set():
-        #TODO lire en boucle les messages serveur
-        pass
+        message = read_message()
+        CORServerQueriesWrapper.get_instance().handle(message)
         time.sleep(0.1)
+
+BUFFER = b""
+
+def read_message():
+    global BUFFER
+
+    try:
+        while True:
+            data = Utils.TCP_SOCK.recv(1024)
+            if not data and not BUFFER:
+                return None
+            BUFFER += data
+            # Vérifier si le séparateur '\n' est présent dans le buffer
+            if b'\n' in BUFFER:
+                message_complet, BUFFER = BUFFER.split(b'\n', 1)
+                return message_complet.decode('utf-8')
+    except BlockingIOError:
+        # Pas encore assez de données reçues
+        return None
 
 @eel.expose
 def guess_letter(letter):

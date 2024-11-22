@@ -117,8 +117,9 @@
         if (document.activeElement.tagName != "INPUT") {
             if (e.key.match(/[a-z]/)) {
                 const letter = e.key
+
                 Array.from(keyboardButtons).forEach((button) => {
-                    if(button.value == key && button.disabled == false) {
+                    if(button.value == letter && button.disabled == false) {
                         button.disabled = true
                         guessLetter(letter)
                     }
@@ -127,10 +128,12 @@
         }
     });
     
-    function guessLetter(key) {
-        // appeler la fonction eel correspondante
+    function guessLetter(letter) {
+        eel.guess_letter(letter)
     }
     
+    eel.expose(setWordState)
+    // met à jour le mot
     function setWordState(word) {
         wordState.innerHTML = word
     }
