@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from Server.Users import UsersCollection
-from Room import RoomsCollection
 from HangmanLogic import Hangman
 import utils
 
@@ -35,19 +33,20 @@ class GuessLetterQuery(HangmanQueryHandler):
 
         token = query["data"].get("token")
         guess = query["data"].get("letter")
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        from Server.Users import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
-        room_id = user.current_room
-        room = RoomsCollection.get_instance().get_room(room_id)
-        if room is None or not isinstance(room.game, Hangman):
+        from Room import RoomsCollection
+        room = RoomsCollection.get_instance().get_room_by_user(token)
+        if room is None or not isinstance(room.current_hangman, Hangman):
             utils.send_message_to(sock, client_address, "error", "Aucune partie en cours dans cette salle")
             return
 
-        result = room.game.guess_letter(user.token, guess)
+        result = room.current_hangman.guess_letter(token, guess)
 
         if result == -1:
             utils.send_message_to(sock, client_address, "error", "Vous n'avez plus d'essais restants")
@@ -65,19 +64,20 @@ class GameStateQuery(HangmanQueryHandler):
             return
 
         token = query["data"].get("token")
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        from Server.Users import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
-        room_id = user.current_room
-        room = RoomsCollection.get_instance().get_room(room_id)
-        if room is None or not isinstance(room.game, Hangman):
+        from Room import RoomsCollection
+        room = RoomsCollection.get_instance().get_room_by_user(token)
+        if room is None or not isinstance(room.current_hangman, Hangman):
             utils.send_message_to(sock, client_address, "error", "Aucune partie en cours dans cette salle")
             return
 
-        gamestate = room.game.get_player_gamestate(user.token)
+        gamestate = room.current_hangman.get_player_gamestate(user.token)
         if gamestate is None:
             utils.send_message_to(sock, client_address, "error", "État du jeu introuvable pour ce joueur")
         else:
@@ -92,22 +92,63 @@ class LeaveRoomQuery(HangmanQueryHandler):
             return
 
         token = query["data"].get("token")
-        user = UsersCollection.get_instance().__connected_users.get(token)
+        from Server.Users import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
-        room_id = user.current_room
-        room = RoomsCollection.get_instance().get_room(room_id)
+        from Room import RoomsCollection
+        room = RoomsCollection.get_instance().get_room_by_user(token)
 
         if room is None:
             utils.send_message_to(sock, client_address, "error", "Salle introuvable")
             return
 
         room.remove_player(user.token)
-        user.current_room = None
-        utils.send_message_to(sock, client_address, "success", f"Vous avez quitté la salle {room_id}")
+        #user.current_room = None
+        utils.send_message_to(sock, client_address, "success", "Vous avez quitté la salle")
+
+
+class ChatMessageQuery(HangmanQueryHandler):
+    def handle(self, sock, query, client_address):
+        if query["type"] != "sendchatmessage":
+            self._try_next(sock, query, client_address)
+            return
+
+        token = query["data"].get("token")
+        message = query["data"].get("message")
+
+        from Users import UsersCollection
+        user = UsersCollection.get_instance().get_connected_user(token)
+
+        if user is None:
+            utils.send_message_to(sock, client_address, "error", "Utilisateur non connecte ou token invalide")
+            return
+
+        from Room import RoomsCollection
+        room = RoomsCollection.get_instance().get_room_by_user(user.username)
+
+        if room is None:
+            utils.send_message_to(sock, client_address, "error", "L'utilisateur n'est pas dans une salle, message impossible")
+            return
+
+        # Diffuser le message à tous les joueurs de la salle (voir la mécanique du chat)
+        for player in room.players:
+            try:
+                player_sock = UsersCollection.get_instance().get_connected_user_socket(player)
+                chat_data = {
+                    "type": "receivechatmessage",
+                    "data": {
+                        "sender": user.username,
+                        "message": message
+                    }
+                }
+                utils.send_message_to(player_sock, None, "success", chat_data)
+            except Exception as e:
+                print(f"Erreur lors de l'envoi du message à {player}: {str(e)}")
+
 
 
 # Classe singleton pour construire la chaîne de responsabilité
@@ -128,6 +169,7 @@ class CORHangmanQueriesWrapper:
         self.__head = GuessLetterQuery()
         self.__head = GameStateQuery(self.__head)
         self.__head = LeaveRoomQuery(self.__head)
+        self.__head = ChatMessageQuery(self.__head)
 
     def __new__(cls, *args, **kwargs):
         if cls.__instance is None:
