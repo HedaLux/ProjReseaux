@@ -3,7 +3,7 @@ import secrets
 import threading
 import socket
 from enum import Enum
-from utils import Status
+import utils
 from Users import *
 from CORHangmanQueries import *
 import json
@@ -41,14 +41,17 @@ class Room():
         self.current_hangman = None
 
     def handle_players_message(self):
+        if self.stop_event.is_set():
+            print("stop event")
         while not self.stop_event.is_set():
             players_copy = list(self.players.values())
+            time.sleep(0.1)
             for player in players_copy:
-                if(not player.status == Status.INGAME):
+                if(not player.status == utils.Status.INGAME):
                     pass
                 if(not player.conn == None):
                     message = self.read_player_message(player)
-                    
+
                     if message is None:
                         continue
                     print(f"Lecture du message pour le joueur {player.username}")
@@ -60,7 +63,7 @@ class Room():
 
     def read_player_message(self, player):
         try:
-            return recevoir_message_room(player.conn, player.addr, self.room_id)
+            return utils.recevoir_message_room(player.conn, player.addr, self.room_id)
         except:
             pass
 

@@ -52,6 +52,7 @@ def recevoir_message_room(sock, addr, room_id):
     try:
         while True:
             data = sock.recv(1024)
+            print(data)
             if not data:
                 return None
             buffers_room[room_id][addr] += data
