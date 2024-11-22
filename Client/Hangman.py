@@ -14,7 +14,8 @@ def start_message_handling_thread():
 def server_message_handler():
     while not Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.is_set():
         message = read_message()
-        CORServerQueriesWrapper.get_instance().handle(message)
+        messageJson = json.loads(message)
+        CORServerQueriesWrapper.get_instance().handle(messageJson)
         time.sleep(0.1)
 
 BUFFER = b""
