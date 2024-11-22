@@ -41,7 +41,7 @@ class Room():
 
     def handle_players_message(self):
         while not self.stop_event.is_set():
-            for player in self.players:
+            for player in self.players.values():
                 if(not player.status == Status.INGAME):
                     pass
                 if(not player.conn == None):

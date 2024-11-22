@@ -1,6 +1,20 @@
 import eel
 import json
 import Utils
+import threading
+import time
+
+@eel.expose
+def start_message_handling_thread():
+    Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT = threading.Event()
+    Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD = threading.Thread(target=server_message_handler)
+    Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD.start()
+
+def server_message_handler():
+    while not Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.is_set():
+        #TODO lire en boucle les messages serveur
+        pass
+        time.sleep(0.1)
 
 @eel.expose
 def guess_letter(letter):
@@ -38,6 +52,7 @@ def leave_room():
         }
 
         Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
+        Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.set()
         print("Requête de sortie de salle envoyée.")
 
     except Exception as e:

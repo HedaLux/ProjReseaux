@@ -6,6 +6,9 @@ TOKEN_PATH = "token.json"
 UDP_SOCK = None
 TCP_SOCK = None
 
+HANGMAN_SERVER_MESSAGE_HANDLER_THREAD = None
+HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT = None
+
 def load_token():
     if(os.path.exists(TOKEN_PATH)):
         with open(TOKEN_PATH, 'r', encoding='UTF-8') as file:
