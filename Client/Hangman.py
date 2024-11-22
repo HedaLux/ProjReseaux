@@ -7,6 +7,7 @@ from CORServerQueries import CORServerQueriesWrapper
 
 @eel.expose
 def start_message_handling_thread():
+    print("démarrage du thread d'écoute")
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT = threading.Event()
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD = threading.Thread(target=server_message_handler)
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD.start()
@@ -15,6 +16,7 @@ def server_message_handler():
     while not Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.is_set():
         message = read_message()
         messageJson = json.loads(message)
+        print(messageJson)
         CORServerQueriesWrapper.get_instance().handle(messageJson)
         time.sleep(0.1)
 

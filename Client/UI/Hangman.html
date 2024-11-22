@@ -95,7 +95,7 @@
 
     // modal var
     const modalGameWrapper = document.getElementById("modal-game-wrapper")
-    const roundStartingMessage = docuement.getElementById("round-starting-message")
+    const roundStartingMessage = document.getElementById("round-starting-message")
     const modalRoundNumber = document.getElementById("modal-round-number")
     const gameWaitingMessage = document.getElementById("game-waiting-message")
     const startGameButton = document.getElementById("start-game")
@@ -263,7 +263,7 @@
         return `${hours}:${minutes}`;
     }
 
-    eel.expose()
+    eel.expose(addMessageToTchat)
     function addMessageToTchat(message, playername) {
         const newElement = document.createElement("div");
         newElement.className = "message";
