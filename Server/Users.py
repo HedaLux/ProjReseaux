@@ -195,9 +195,8 @@ class UsersCollection:
 
     
     def is_token_valid(self, token):
-        for user in self.__disconnected_users:
-            if(user["token"] == token):
-                return True
+        if token in self.__disconnected_users:
+            return True
         return False
 
 class User():

@@ -109,6 +109,24 @@ class LeaveRoomQuery(HangmanQueryHandler):
         user.current_room = None
         utils.send_message_to(sock, client_address, "success", f"Vous avez quitté la salle {room_id}")
 
+# Maillon pour commencer la partie
+class StartGameQuery(HangmanQueryHandler):
+    def handle(self, sock, query, client_address):
+        if query["type"] != "startgame":
+            self._try_next(sock, query, client_address)
+            return
+
+        token = query["data"].get("token")
+        room_id = query["data"].get("room-id")
+
+        from Room import RoomsCollection
+
+        player = RoomsCollection.get_room(room_id).get_player(token)
+
+        RoomsCollection.get_room(room_id).start_game(player)
+
+        utils.send_message_to(sock, client_address, "success", f"Vous avez quitté la salle {room_id}")
+
 
 # Classe singleton pour construire la chaîne de responsabilité
 class CORHangmanQueriesWrapper:

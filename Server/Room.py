@@ -53,11 +53,14 @@ class Room():
         except:
             pass
 
-
     def start_game(self, player):
         if(player != self.room_owner):
             pass #TODO erreur
-        
+
+        thread_game_handler = threading.Thread(target=self.game_handler)
+        thread_game_handler.start()
+
+    def game_handler(self):
         while(self.current_round <= self.round_count):
             # initialisation du jeu de pendu pour le round actuel
             self.current_hangman = Hangman()
@@ -92,9 +95,13 @@ class Room():
         for player in self.players:
             if(not player.conn == None):
                 message = {
-                    
+                    "type" : "status_change",
+                    "data" : {
+                        "status" : self.room_status
+                    }
                 }
-                player.conn.send()
+
+                player.conn.sendall((json.dumps(message) + "\n").encode())
 
     def run_round(self, stop_event):
         while not stop_event.is_set():
