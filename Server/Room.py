@@ -119,6 +119,18 @@ class Room():
             self.players[player.token] = player
             self.players[player.token]["score"] = 0
 
+    def remove_player(self, player_token):
+        if player_token in self.players:
+            del self.players[player_token]
+            print(f"Le joueur avec le token {player_token} a été retiré de la salle {self.room_id}")
+        else:
+            print(f"Le joueur avec le token {player_token} n'est pas dans la salle {self.room_id}")
+
+        if not self.players:
+            print(f"La salle {self.room_id} est vide. Suppression en cours.")
+            RoomsCollection.get_instance().delete_room(self.room_id)
+
+
 class RoomsCollection():
     ROOM_ID_SIZE = 16
     __instance = None
@@ -155,3 +167,10 @@ class RoomsCollection():
         if(room_id not in self.rooms):
             return None
         return self.rooms[room_id]
+    
+    def get_room_by_user(self, user_token):
+        for room in self.rooms.values():
+            if user_token in room.players:
+                return room
+        return None
+
