@@ -6,6 +6,7 @@ from enum import Enum
 from utils import Status
 from Users import *
 from CORHangmanQueries import *
+import json
 
 class RoomStatus(Enum):
     WAITING = 1
@@ -46,7 +47,11 @@ class Room():
                     pass
                 if(not player.conn == None):
                     message = self.read_player_message(player)
-                    CORHangmanQueriesWrapper.get_instance().handle(message)
+                    if message is None:
+                        #print("Message NONE Room.py\n")
+                        continue
+                    query = json.loads(message)
+                    CORHangmanQueriesWrapper.get_instance().handle(player.conn, query, player.addr)
 
     def read_player_message(self, player):
         try:
