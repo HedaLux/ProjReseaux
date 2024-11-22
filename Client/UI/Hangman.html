@@ -89,10 +89,20 @@
     const playerList = document.getElementById("player-list")
     const wordState = document.getElementById("word")
     const triesLeft = document.getElementById("tries-left")
-    const keyboard = document.getElementById("keyboard")
-    const keyboardButtons = keyboard.getElementsByTagName("button")
+    const keyboardButtons = document.getElementById("keyboard").getElementsByTagName("button")
     const currentRound = document.getElementById("current-round")
     const lastRound = document.getElementById("last-round")
+
+    // modal var
+    const modalGameWrapper = document.getElementById("modal-game-wrapper")
+    const roundStartingMessage = docuement.getElementById("round-starting-message")
+    const modalRoundNumber = document.getElementById("modal-round-number")
+    const gameWaitingMessage = document.getElementById("game-waiting-message")
+    const startGameButton = document.getElementById("start-game")
+
+    // server var
+    let roomCooldownDuration = 0;
+    let roomRoundDuration = 0;
     
     function resetKeyboard() {
         Array.from(keyboardButtons).forEach((button) => {
@@ -131,11 +141,140 @@
     function guessLetter(letter) {
         eel.guess_letter(letter)
     }
-    
-    eel.expose(setWordState)
-    // met à jour le mot
-    function setWordState(word) {
+
+    eel.expose(userJoined)
+    function userJoined(username) {
+        const players = playerList.getElementsByClassName("player")
+        let found = false
+
+        Array.from(players).forEach((player) => {
+            if(player.innerHTML == username) {
+                if(player.classList.contains("disconnected")) {
+                    player.classList.remove("disconnected")
+                }
+                found = true
+            }
+        })
+
+        if(!found) {
+            const newElement = document.createElement("div");
+            newElement.className = "player";
+
+            newElement.innerHTML = `
+                ${username}
+            `
+
+            playerList.appendChild(newElement)
+        }
+    }
+
+    eel.expose(userLeft)
+    function userLeft(username) {
+        const players = playerList.getElementsByClassName("player")
+
+        Array.from(players).forEach((player) => {
+            if(player.innerHTML == username) {
+                if(!player.classList.contains("disconnected")) {
+                    player.classList.add("disconnected")
+                }
+            }
+        })
+    }
+
+    eel.expose(guessResult)
+    function guessResult(letter, isGood, word, _triesLeft) {
+        if(isGood) {
+            Array.from(keyboardButtons).forEach((button) => {
+                if(button.value == letter) {
+                    if(!button.classList.contains("valid")) {
+                        button.classList.add("valid")
+                    }
+                }
+            })
+
+            wordState.innerHTML = word
+        } else {
+            Array.from(keyboardButtons).forEach((button) => {
+                if(button.value == letter) {
+                    if(!button.classList.contains("invalid")) {
+                        button.classList.add("invalid")
+                    }
+                }
+            })
+
+            triesLeft.innerHTML = _triesLeft
+        }
+    }
+
+    function updateScores() {}
+
+    eel.expose(roundCooldown)
+    function roundCooldown(nextRound) {
+        updateScores()
+
+        resetKeyboard()
+
+        // on montre l'overlay de pause
+        if(modalGameWrapper.classList.contains("hidden")) {
+            modalGameWrapper.classList.remove("hidden")
+        }
+
+        modalRoundNumber.innerHTML = nextRound
+
+        // on montre le message du cooldown de round
+        if(roundStartingMessage.classList.contains("hidden")) {
+            roundStartingMessage.classList.remove("hidden")
+        }
+
+        // on cache le bouton pour démarrer le round
+        if(!startGameButton.classList.contains("hidden")) {
+            startGameButton.classList.add("hidden")
+        }
+
+        // on cache le message d'attente de début de partie
+        if(!gameWaitingMessage.classList.contains("hidden")) {
+            gameWaitingMessage.classList.add("hidden")
+        }
+
+        startCooldownTimer(roomCooldownDuration)
+    }
+
+    eel.expose(roundStart)
+    function roundStart(roundNumber, word) {
+        if(!modalGameWrapper.classList.contains("hidden")) {
+            modalGameWrapper.classList.add("hidden")
+        }
+
+        currentRound.innerHTML = roundNumber
         wordState.innerHTML = word
+
+        startTimer(roomRoundDuration)
+    }
+
+    eel.expose(gameEnd)
+    function gameEnd() {
+
+    }
+    
+    function getCurrentTime() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0'); // Ajouter un zéro devant si nécessaire
+        const minutes = now.getMinutes().toString().padStart(2, '0'); // Ajouter un zéro devant si nécessaire
+        return `${hours}:${minutes}`;
+    }
+
+    eel.expose()
+    function addMessageToTchat(message, playername) {
+        const newElement = document.createElement("div");
+        newElement.className = "message";
+
+        newElement.innerHTML = `
+            <span class="time">[${getCurrentTime()}]</span>
+            <span class="playername">${playername}</span>
+            ${message}
+        `
+
+        tchat.appendChild(newElement)
     }
 
     eel.start_message_handling_thread()

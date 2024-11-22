@@ -66,10 +66,10 @@ class Room():
 
     def start_game(self, player):
         if(player != self.room_owner):
-            pass #TODO erreur
+            return #TODO erreur
         
         if(not self.room_status == RoomStatus.WAITING):
-            pass #TODO erreur
+            return #TODO erreur
 
         thread_game_handler = threading.Thread(target=self.game_handler)
         thread_game_handler.start()
