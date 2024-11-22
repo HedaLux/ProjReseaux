@@ -43,7 +43,10 @@ buffers_room = {}
 def recevoir_message_room(sock, addr, room_id):
     global buffers_room
     
-    if(addr not in buffers_room[room_id]):
+    if room_id not in buffers_room:
+        buffers_room[room_id] = {}
+
+    if addr not in buffers_room[room_id]:
         buffers_room[room_id][addr] = b""
 
     try:
