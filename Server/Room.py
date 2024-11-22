@@ -28,9 +28,10 @@ class Room():
         self.current_round = 1
         self.room_status = RoomStatus.WAITING
         self.players = {}
+        self.players_score = {}
+
         self.players[room_owner.token] = room_owner
-        
-        self.players[room_owner.token]["score"] = 0
+        self.players_score[room_owner.token] = 0
 
         self.stop_event = threading.Event()
         self.handle_message_thread = threading.Thread(target=self.handle_players_message)
@@ -56,6 +57,9 @@ class Room():
     def start_game(self, player):
         if(player != self.room_owner):
             pass #TODO erreur
+        
+        if(not self.room_status == RoomStatus.WAITING):
+            pass #TODO erreur
 
         thread_game_handler = threading.Thread(target=self.game_handler)
         thread_game_handler.start()
@@ -67,6 +71,19 @@ class Room():
             for player in self.players:
                 Hangman.add_player(player)
             
+            # la room change de status et on enclenche le cooldown inter round
+            self.room_status = RoomStatus.ROUND_COOLDOWN
+            
+            # le round est fini on met à jour les scores et on change de round
+            self.update_scores()
+            self.current_round = self.current_round + 1
+
+            self.notify_users() # on prévient les utilisateurs que le cooldown vient de se lancer
+            self.current_cooldown = self.round_cooldown
+            while not self.current_cooldown == 0:
+                time.sleep(1)
+                self.current_cooldown -= 1
+
             # la room change de status et on enclenche le timer du round
             self.room_status = RoomStatus.ROUND_ONGOING
             self.notify_users() # on prévient les utilisateurs que le round vient de commencer
@@ -74,18 +91,6 @@ class Room():
             while not self.current_duration == 0:
                 time.sleep(1)
                 self.current_duration -= 1
-            
-            # le round est fini on met à jour les scores et on change de round
-            self.update_scores()
-            self.current_round = self.current_round + 1
-
-            # la room change de status et on enclenche le cooldown inter round
-            self.room_status = RoomStatus.ROUND_COOLDOWN
-            self.notify_users() # on prévient les utilisateurs que le cooldown vient de se lancer
-            self.current_cooldown = self.round_cooldown
-            while not self.current_cooldown == 0:
-                time.sleep(1)
-                self.current_cooldown -= 1
 
         self.room_status = RoomStatus.GAME_ENDED
         self.notify_users() # on prévient les utilisateurs que la partie est terminée
@@ -103,21 +108,13 @@ class Room():
 
                 player.conn.sendall((json.dumps(message) + "\n").encode())
 
-    def run_round(self, stop_event):
-        while not stop_event.is_set():
-            try:
-                # on ecoute sur tous les sockets client connectés
-                pass
-            except socket.timeout:
-                continue
-
     def game_end(self):
         RoomsCollection.get_instance().delete_room(self.room_id)
 
     def addPlayer(self, player):
         if(player not in self.players):
             self.players[player.token] = player
-            self.players[player.token]["score"] = 0
+            self.players_score[player.token] = 0
 
     def remove_player(self, player_token):
         if player_token in self.players:
@@ -131,6 +128,10 @@ class Room():
             RoomsCollection.get_instance().delete_room(self.room_id)
 
 
+
+"""
+CONTENEUR DES ROOMS : classe singleton
+"""
 class RoomsCollection():
     ROOM_ID_SIZE = 16
     __instance = None

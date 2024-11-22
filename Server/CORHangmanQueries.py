@@ -33,7 +33,7 @@ class GuessLetterQuery(HangmanQueryHandler):
 
         token = query["data"].get("token")
         guess = query["data"].get("letter")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
@@ -64,7 +64,7 @@ class GameStateQuery(HangmanQueryHandler):
             return
 
         token = query["data"].get("token")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:
@@ -92,7 +92,7 @@ class LeaveRoomQuery(HangmanQueryHandler):
             return
 
         token = query["data"].get("token")
-        from Server.Users import UsersCollection
+        from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
 
         if user is None:

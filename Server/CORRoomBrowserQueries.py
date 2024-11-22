@@ -41,7 +41,7 @@ class GetRoomsQuery(RoomBrowserQueryHandler):
             rooms_data.append({
                 "room_id": room_id,
                 "roomname": room.roomname,
-                "owner": room.room_owner,
+                "owner": room.room_owner.username,
                 "players": len(room.players),
                 "max_players": room.max_player,
                 "rounds": room.round_count,
@@ -105,7 +105,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Salle pleine")
             return
 
-        room.addPlayer(user.username)
+        room.addPlayer(user)
         utils.send_message_to(sock, client_address, "success", f"Connecté à la salle {room_id}")
 
 
@@ -132,14 +132,14 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
             round_duration=room_data["round_duration"],
             round_cooldown=room_data["round_cooldown"],
             no_tries=room_data["no_tries"],
-            room_owner=user.username
+            room_owner=user
         )
         # Ajouter les informations complètes de la salle dans la réponse
         room = RoomsCollection.get_instance().get_room(room_id)
         room_info = {
             "room_id": room_id,
             "roomname": room.roomname,
-            "owner": room.room_owner,
+            "owner": room.room_owner.username,
             "players": len(room.players),
             "max_players": room.max_player,
             "rounds": room.round_count,

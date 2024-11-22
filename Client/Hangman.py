@@ -1,6 +1,5 @@
 import eel
 import json
-import os
 import Utils
 
 @eel.expose
