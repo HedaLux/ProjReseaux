@@ -47,8 +47,12 @@ class Room():
             players_copy = list(self.players.values())
             time.sleep(0.1)
             for player in players_copy:
+                print(f"")
                 if(not player.status == utils.Status.INGAME):
-                    pass
+                    continue
+                if(player.last_game_id != self.room_id):
+                    continue
+
                 if(not player.conn == None):
                     message = self.read_player_message(player)
 
@@ -64,8 +68,8 @@ class Room():
     def read_player_message(self, player):
         try:
             return utils.recevoir_message_room(player.conn, player.addr, self.room_id)
-        except:
-            pass
+        except (ConnectionResetError, ConnectionAbortedError):
+            UsersCollection.disconnect_user(player)
 
     def start_game(self, player):
         if(player != self.room_owner):
@@ -160,30 +164,20 @@ class Room():
             self.players[player.token] = player
             self.players_score[player.token] = 0
 
-    def sendAllStartGame(self):
-        playerlistcopy = self.players.values()
-        
-        message = {
-            "type": "status_change",
+        query = {
+            "type": "userjoin",
             "data": {
-                "status": self.room_status.name,
-                "round_number": self.current_round,
-                "word": self.current_hangman.get_player_gamestate(player.token).get('word', '????'),
-                "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0),
-                "room_cooldown": self.round_cooldown, 
-                "room_round_duration": self.round_duration
+                "username": player.username
             }
         }
 
-        for player in playerlistcopy:
-            try:
-                json_message = json.dumps(message) + "\n"
-                print(f"DEBUG: Message envoyé : {json_message.strip()}")
-                player.conn.sendall((json.dumps(json_message) + "\n").encode())
-            except Exception as e:
-                print(f"Erreur lors de l'envoi au joueur {player.token}: {e}")
+        for p in self.players.values():
+            print(f"p = {p} et player = {player}")
+            if p != player:
+                p.conn.sendall((json.dumps(query) + "\n").encode())
 
-    def playerLeaveRoom(player):
+
+    def playerLeaveRoom(self, player):
         pass
 
     def remove_player(self, player_token):

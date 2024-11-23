@@ -121,18 +121,8 @@ class UsersCollection:
 
     def __generate_token(self):
         return secrets.token_hex(self.TOKEN_SIZE)
-    
 
 
-    """def connect_user(self, username):
-        if(username in self.__connected_users):
-            raise Exception("Utilisateur déjà dans la table des utilisateurs connectés")
-        if(username in self.__disconnected_users):
-            raise Exception("Utilisateur dans la table des utilisateurs déconnectés")
-        token = self.__generate_token()
-        self.__connected_users[username] = {"token":token}
-        return token"""
-    
     def add_user(self, username, addr):
         # On génère un nouveau token pour l'utilisateur
         token = self.__generate_token()
@@ -143,12 +133,14 @@ class UsersCollection:
         # On ajoute l'utilisateur dans la fil d'attente des connexions
         self.__waiting_to_connect_users[token] = user
         return token
-    
+
+
     # fonction pour la déconnexion non naturelle (crash, exctinction du pc, ...)
     def disconnect_user(self, user):
         user.conn = None
         self.__connected_users.pop(user.token)
         self.__disconnected_users[user.token] = user
+
 
     # fonction pour la déconnexion totale via le bouton "se déconnecter"
     def remove_user(self, token):
@@ -161,21 +153,12 @@ class UsersCollection:
             print(f"Aucun utilisateur trouvé avec le token : {token}")
 
 
-    """def reconnect_user(self, user):
-        pass"""
-
-    """def disconnect_user(self, username):
-        if(username not in self.connect_user):
-            raise Exception("utilisateur pas dans la table des utilisateurs connectés")
-        self.__disconnected_users[username] = {
-            "token" : self.__connected_users[username],
-            "disconnectTime" : time.time() 
-            }
-        del self.__connected_users[username]"""
-
     def reconnect_user(self, user):
         if(user.token not in self.__disconnected_users):
             raise Exception("Utilisateur absent de la table des utilisateurs déconnectés")
+        self.__disconnected_users.pop(user)
+        self.__waiting_to_connect_users(user)
+
 
     def get_user_token(self, username):
         # Vérifier dans les utilisateurs connectés
