@@ -125,9 +125,7 @@ class Room():
                         "status": self.room_status.name,
                         "round_number": self.current_round,
                         "word": self.current_hangman.get_player_gamestate(player.token).get('word', '????'),
-                        "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0),
-                        "room_cooldown": self.round_cooldown, 
-                        "room_round_duration": self.round_duration
+                        "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0)
                     }
                 }
                 try:

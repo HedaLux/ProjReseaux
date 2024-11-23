@@ -87,7 +87,7 @@ function startCooldownTimer(duration) {
 }
 
 // Fonction pour mettre à jour la liste des joueurs
-eel.expose(update_player_list);
+/*eel.expose(update_player_list);
 function update_player_list(players) {
     const playerListContainer = document.getElementById("player-list");
     playerListContainer.innerHTML = ""; // Vider la liste existante
@@ -97,5 +97,5 @@ function update_player_list(players) {
         playerListContainer.appendChild(playerItem);
     });
     console.log("Liste des joueurs mise à jour :", players);
-}
+}*/
 

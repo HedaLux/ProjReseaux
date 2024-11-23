@@ -109,11 +109,13 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
         user.status = utils.Status.INGAME
         room.addPlayer(user)
         utils.send_message_to(sock, client_address, "success", f"Connecté à la salle {room_id}")
+        """
         self.notify_all_players_in_room(
             room,
             "player_joined",
             {"username": user.username, "players": [p.username for p in room.players.values()]}
         )
+        """
 
     def notify_all_players_in_room(self, room, message_type, data):
     # Créez le message une fois au début
@@ -174,11 +176,13 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
         }
 
         utils.send_message_to(sock, client_address, "success", room_info)
+        """
         self.notify_all_players_in_room(
             room,
             "player_joined",
             {"username": user.username, "players": [p.username for p in room.players.values()]}
         )
+        """
 
     def notify_all_players_in_room(self, room, message_type, data):
     # Créez le message une fois au début

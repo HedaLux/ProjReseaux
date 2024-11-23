@@ -163,7 +163,7 @@ document.forms['create-room'].addEventListener("submit", (e) => {
         gamemode,
         max_player: maxPlayers,
         round_count: rounds,
-        round_duration: roundTime * 60,
+        round_duration: roundTime,
         round_cooldown: roundCooldown,
         no_tries: 6 // essais par default
     };

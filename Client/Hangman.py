@@ -8,6 +8,7 @@ from CORServerQueries import CORServerQueriesWrapper
 @eel.expose
 def start_message_handling_thread():
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT = threading.Event()
+    Utils.TCP_SOCK.setblocking(False)
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD = threading.Thread(target=server_message_handler)
     Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD.start()
 
@@ -15,11 +16,11 @@ def server_message_handler():
     while not Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.is_set():
         time.sleep(0.1)
         message = read_message()
-        print(f"un nv message: {message}\n")
         if message:
+            print(f"un nv message: {message}\n")
             messageJson = json.loads(message)
             CORServerQueriesWrapper.get_instance().handle(messageJson)
-        time.sleep(0.1)
+    Utils.TCP_SOCK.setblocking(True)
 
 BUFFER = b""
 
@@ -29,13 +30,17 @@ def read_message():
     try:
         while True:
             data = Utils.TCP_SOCK.recv(1024)
-            if not data and not BUFFER:
+
+            if not data:
                 return None
+            
             BUFFER += data
             # Vérifier si le séparateur '\n' est présent dans le buffer
             if b'\n' in BUFFER:
                 message_complet, BUFFER = BUFFER.split(b'\n', 1)
                 return message_complet.decode('utf-8')
+            
+            print(BUFFER)
     except BlockingIOError:
         # Pas encore assez de données reçues
         return None

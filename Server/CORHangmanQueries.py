@@ -98,45 +98,45 @@ class GameStateQuery(HangmanQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
-        from Room import RoomsCollection
+
+        from Room import RoomsCollection, RoomStatus
         room = RoomsCollection.get_instance().get_room_by_user(token)
-        if room is None or not isinstance(room.current_hangman, Hangman):
-            utils.send_message_to(sock, client_address, "error", "Aucune partie en cours dans cette salle")
+        print(room)
+        if room is None:
+            utils.send_message_to(sock, client_address, "error", "La salle n'existe pas")
             return
 
-        gamestate = room.current_hangman.get_player_gamestate(user.token)
-        if gamestate is None:
-            utils.send_message_to(sock, client_address, "error", "État du jeu introuvable pour ce joueur")
-        else:
-            utils.send_message_to(sock, client_address, "success", gamestate)
+        gamestate = None
+        if(not room.room_status == RoomStatus.WAITING):
+            gamestate = room.current_hangman.get_player_gamestate(user.token)
+        
+        player_list = [player.username for player in room.players.values()]
 
         response = {
-            "type": "guessletterres",
+            "type": "roominfo",
             "data": {
                 "gamestate": gamestate,
-                "max_player": room.max_player,
-                "round-count": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate,
-                "gamestate": gamestate
+                "round_status": room.room_status.name,
+                "round_count": room.round_count,
+                "round_duration": room.round_duration,
+                "round_cooldown": room.round_cooldown,
+                "notries": room.no_tries,
+                "room_owner": room.room_owner.username,
+                "current_round": room.current_round,
+                "current_round_cooldown": room.current_cooldown,
+                "current_round_duration": room.current_duration,
+                "player_list": player_list
             }
         }
 
-        self.roomname = roomname
-        self.max_player = max_player
-        self.round_count = round_count
-        self.round_duration = round_duration
-        self.current_duration = 0
-        self.round_cooldown = round_cooldown
-        self.current_cooldown = 0
-        self.no_tries = no_tries
-        self.room_owner = room_owner
-        self.current_round = 1
-        self.room_status = RoomStatus.WAITING
+        try:
+            json_message = json.dumps(response) + "\n"
+            print(f"DEBUG: Message envoyé : {json_message.strip()}")
+            user.conn.sendall(json_message.encode())
+        except Exception as e:
+            print(f"Erreur lors de l'envoi au joueur {user.token}: {e}")
+
+
 
 
 # Maillon pour quitter la salle

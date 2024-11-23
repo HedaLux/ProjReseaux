@@ -103,6 +103,7 @@
     // server var
     let roomCooldownDuration = 0;
     let roomRoundDuration = 0;
+    let notries = 0;
     
     function resetKeyboard() {
         Array.from(keyboardButtons).forEach((button) => {
@@ -204,9 +205,13 @@
                     }
                 }
                 if(button.disabled == false) {
-                    button.disabled == true
+                    button.disabled = true
                 }
             })
+            
+            if(!wordState.classList.contains("won")) {
+                wordState.classList.add("won")
+            }
 
             wordState.innerHTML = word
         }
@@ -236,17 +241,31 @@
                         button.disabled == true
                     }
                 })
+
+                if(!wordState.classList.contains("lost")) {
+                    wordState.classList.add("lost")
+                }
             }
+
+            
         }
     }
 
     function updateScores() {}
 
     eel.expose(roundCooldown)
-    function roundCooldown(nextRound, roomCD) {
+    function roundCooldown(nextRound) {
         updateScores()
 
         resetKeyboard()
+
+        if(wordState.classList.contains("lost")) {
+            wordState.classList.remove("lost")
+        }
+
+        if(wordState.classList.contains("won")) {
+            wordState.classList.remove("won")
+        }
 
         // on montre l'overlay de pause
         if(modalGameWrapper.classList.contains("hidden")) {
@@ -270,19 +289,20 @@
             gameWaitingMessage.classList.add("hidden")
         }
 
-        startCooldownTimer(roomCD)
+        startCooldownTimer(roomCooldownDuration)
     }
 
     eel.expose(roundStart)
-    function roundStart(roundNumber, word, roomRD) {
+    function roundStart(roundNumber, word) {
         if(!modalGameWrapper.classList.contains("hidden")) {
             modalGameWrapper.classList.add("hidden")
         }
 
         currentRound.innerHTML = roundNumber
         wordState.innerHTML = word
+        triesLeft.innerHTML = triesLeft
 
-        startTimer(roomRD)
+        startTimer(roomRoundDuration)
     }
 
     eel.expose(gameEnd)
@@ -316,7 +336,26 @@
         console.log("Bouton 'Lancer la partie' cliqué");
     })
 
+    eel.expose(setRoomInfo)
+    function setRoomInfo(round_count, round_duration, round_cooldown, notries, room_owner, player_list) {
+        lastRound.innerHTML = round_count
+        currentRound.innerHTML = 1
+        roomCooldownDuration = round_cooldown
+        roomRoundDuration = round_duration
+
+        player_list.forEach(player => {
+            const newElement = document.createElement("div");
+            newElement.className = "player";
+
+            newElement.innerHTML = `
+                ${player}
+            `
+
+            playerList.appendChild(newElement)
+        })
+    }
+
     eel.start_message_handling_thread()
-    eel.request_game_info()
+    eel.request_game_state()
     
 </script>

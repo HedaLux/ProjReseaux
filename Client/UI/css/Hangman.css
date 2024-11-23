@@ -251,7 +251,13 @@ button:active {
     color: white;
 }
 
+#word.won {
+    color: chartreuse;
+}
 
+#word.lost {
+    color: red;
+}
 
 
 
