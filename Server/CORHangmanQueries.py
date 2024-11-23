@@ -79,8 +79,8 @@ class GuessLetterQuery(HangmanQueryHandler):
         except Exception as e:
             print(f"Erreur lors de l'envoi au joueur {user.token}: {e}")
 
-        utils.send_message_to(sock, client_address, "success", response)
-        user.conn.sendall(json_message.encode())
+        #utils.send_message_to(sock, client_address, "success", response)
+        #user.conn.sendall(json_message.encode())
 
 
 # Maillon pour récupérer l'état du jeu
@@ -109,6 +109,34 @@ class GameStateQuery(HangmanQueryHandler):
             utils.send_message_to(sock, client_address, "error", "État du jeu introuvable pour ce joueur")
         else:
             utils.send_message_to(sock, client_address, "success", gamestate)
+
+        response = {
+            "type": "guessletterres",
+            "data": {
+                "gamestate": gamestate,
+                "max_player": room.max_player,
+                "round-count": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate,
+                "gamestate": gamestate
+            }
+        }
+
+        self.roomname = roomname
+        self.max_player = max_player
+        self.round_count = round_count
+        self.round_duration = round_duration
+        self.current_duration = 0
+        self.round_cooldown = round_cooldown
+        self.current_cooldown = 0
+        self.no_tries = no_tries
+        self.room_owner = room_owner
+        self.current_round = 1
+        self.room_status = RoomStatus.WAITING
 
 
 # Maillon pour quitter la salle
@@ -213,6 +241,7 @@ class StartGameQuery(HangmanQueryHandler):
         try:
             print("room.start_game(player)")
             room.start_game(player)
+            room.sendAllStartGame()
             utils.send_message_to(sock, client_address, "success", "La partie a commencé")
         except Exception as e:
             utils.send_message_to(sock, client_address, "error", f"Erreur lors du démarrage de la partie : {str(e)}")

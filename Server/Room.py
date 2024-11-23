@@ -162,6 +162,29 @@ class Room():
             self.players[player.token] = player
             self.players_score[player.token] = 0
 
+    def sendAllStartGame(self):
+        playerlistcopy = self.players.values()
+        
+        message = {
+            "type": "status_change",
+            "data": {
+                "status": self.room_status.name,
+                "round_number": self.current_round,
+                "word": self.current_hangman.get_player_gamestate(player.token).get('word', '????'),
+                "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0),
+                "room_cooldown": self.round_cooldown, 
+                "room_round_duration": self.round_duration
+            }
+        }
+
+        for player in playerlistcopy:
+            try:
+                json_message = json.dumps(message) + "\n"
+                print(f"DEBUG: Message envoyé : {json_message.strip()}")
+                player.conn.sendall((json.dumps(json_message) + "\n").encode())
+            except Exception as e:
+                print(f"Erreur lors de l'envoi au joueur {player.token}: {e}")
+
     def remove_player(self, player_token):
         if player_token in self.players:
             del self.players[player_token]

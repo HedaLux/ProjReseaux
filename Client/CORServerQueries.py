@@ -53,7 +53,7 @@ class GuessLetterResponse(QueryHandler):
         tries_left = query["data"]["tries_left"]
 
         # Appeler la fonction côté UI pour mettre à jour l'affichage
-        eel.guessResult(letter, result == 1, word, tries_left)
+        eel.guessResult(letter, result, word, tries_left)
 
 
 
@@ -94,6 +94,21 @@ class RoomInfo(QueryHandler):
         if(query["type"] != "roominfo"):
             self._try_next(query)
             return
+        
+        print(query)
+
+        # Appeler les fonctions UI correspondantes via Eel
+        # Faire en sorte que le message amene la data voulue
+        if query['data']['status'] == 'ROUND_COOLDOWN':
+            eel.roundCooldown(query['data'].get("round_number", 1), query["data"].get("room_cooldown", 0))
+        elif query['data']['status'] == 'ROUND_ONGOING':
+            eel.roundStart(
+                query['data'].get("round_number", 1),
+                query['data'].get("word", "_ _ _ _"),
+                query["data"].get("room_round_duration", 0)
+            )
+        elif query['data']['status'] == 'GAME_ENDED':
+            eel.gameEnd()
         
 class UpdatePlayerListQuery(QueryHandler):
     def handle(self, query):

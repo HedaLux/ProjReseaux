@@ -48,7 +48,7 @@
                         <button class="" value="r">r</button>
                         <button class="" value="s">s</button>
                         <button class="" value="t">t</button>
-                        <button class="" value="y">u</button>
+                        <button class="" value="u">u</button>
                         <button class="" value="v">v</button>
                         <button class="" value="w">w</button>
                         <button class="" value="x">x</button>
@@ -182,8 +182,9 @@
     }
 
     eel.expose(guessResult)
-    function guessResult(letter, isGood, word, _triesLeft) {
-        if(isGood) {
+    function guessResult(letter, result, word, _triesLeft) {
+        // Correct mais incomplet
+        if(result == 1) {
             Array.from(keyboardButtons).forEach((button) => {
                 if(button.value == letter) {
                     if(!button.classList.contains("valid")) {
@@ -193,7 +194,32 @@
             })
 
             wordState.innerHTML = word
-        } else {
+        }
+        // Correct et complet
+        if(result == 2) {
+            Array.from(keyboardButtons).forEach((button) => {
+                if(button.value == letter) {
+                    if(!button.classList.contains("valid")) {
+                        button.classList.add("valid")
+                    }
+                }
+                if(button.disabled == false) {
+                    button.disabled == true
+                }
+            })
+
+            wordState.innerHTML = word
+        }
+        // Plus d'essais restant
+        if(result == -1) {
+            Array.from(keyboardButtons).forEach((button) => {
+                if(button.disabled == false) {
+                    button.disabled = true
+                }
+            })
+        }
+        // Incorrect
+        if(result == 0) {
             Array.from(keyboardButtons).forEach((button) => {
                 if(button.value == letter) {
                     if(!button.classList.contains("invalid")) {
@@ -203,6 +229,14 @@
             })
 
             triesLeft.innerHTML = _triesLeft
+
+            if(_triesLeft == 0) {
+                Array.from(keyboardButtons).forEach((button) => {
+                    if(button.disabled == false) {
+                        button.disabled == true
+                    }
+                })
+            }
         }
     }
 
@@ -283,5 +317,6 @@
     })
 
     eel.start_message_handling_thread()
+    eel.request_game_info()
     
 </script>
