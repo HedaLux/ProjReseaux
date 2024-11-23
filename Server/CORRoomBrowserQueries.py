@@ -108,7 +108,7 @@ class JoinRoomQuery(RoomBrowserQueryHandler):
 
         user.status = utils.Status.INGAME
         room.addPlayer(user)
-        user.last_room_id = room.room_id
+        user.last_game_id = room.room_id
         utils.send_message_to(sock, client_address, "success", f"Connecté à la salle {room_id}")
         """
         self.notify_all_players_in_room(
@@ -175,7 +175,7 @@ class CreateRoomQuery(RoomBrowserQueryHandler):
             "rounds": room.round_count,
             "status": room.room_status.name.lower()
         }
-        user.last_room_id = room.room_id
+        user.last_game_id = room.room_id
         utils.send_message_to(sock, client_address, "success", room_info)
         """
         self.notify_all_players_in_room(

@@ -164,8 +164,7 @@ class LeaveRoomQuery(HangmanQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Salle introuvable")
             return
 
-        room.remove_player(user.token)
-        #user.current_room = None
+        room.player_leave_room(user)
         utils.send_message_to(sock, client_address, "success", "Vous avez quitté la salle")
 
 

@@ -47,7 +47,7 @@ class Room():
             players_copy = list(self.players.values())
             time.sleep(0.1)
             for player in players_copy:
-                print(f"")
+                print(f"last id {player.last_game_id} || id de la room {self.room_id}")
                 if(not player.status == utils.Status.INGAME):
                     continue
                 if(player.last_game_id != self.room_id):
@@ -213,20 +213,17 @@ class Room():
                 p.conn.sendall((json.dumps(query) + "\n").encode())
 
 
-    def playerLeaveRoom(self, player):
-        pass
+    def player_leave_room(self, player):
+        from Users import Status
+        player.status = Status.INMENU
 
-    def remove_player(self, player_token):
-        if player_token in self.players:
-            del self.players[player_token]
-            print(f"Le joueur avec le token {player_token} a été retiré de la salle {self.room_id}")
-        else:
-            print(f"Le joueur avec le token {player_token} n'est pas dans la salle {self.room_id}")
+        is_empty = True
+        for p in self.players.value():
+            if(p.last_game_id == self.room_id):
+                is_empty = False
 
-        if not self.players:
-            print(f"La salle {self.room_id} est vide. Suppression en cours.")
+        if(self.room_status == RoomStatus.WAITING and is_empty):
             RoomsCollection.get_instance().delete_room(self.room_id)
-
 
 
 """
