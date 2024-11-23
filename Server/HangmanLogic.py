@@ -7,8 +7,11 @@ class Hangman():
         self.players_state = {}
         self.nb_tries = nb_tries
         for player in players:
-            self.players_state[player.token]['word'] = '_' * len(self.word)
-            self.players_state[player.token]['nb_tries_left'] = nb_tries
+            self.players_state[player.token] = {
+                'word': '_' * len(self.word),  # Mot masqué
+                'nb_tries_left': nb_tries,    # Nombre d'essais restants
+                #'guessed_letters': []         # Lettres devinées si nécessaire
+            }
 
     def guess_letter(self, player_token, guess):
         if(not self.__check_player_existence(player_token)):

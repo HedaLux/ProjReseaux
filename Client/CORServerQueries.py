@@ -59,9 +59,11 @@ class MessageReceived(QueryHandler):
 # Maillon quand la salle change de status
 class RoomStateChange(QueryHandler):
     def handle(self, query):
-        if(query["type"] != "roomstatechange"):
+        if(query["type"] != "status_change"):
             self._try_next(query)
             return
+    
+        print(query)
 
 
 # Maillon quand on récupère les infos de la salle

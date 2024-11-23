@@ -81,45 +81,52 @@ class Room():
         while(self.current_round <= int(self.round_count)):
             # initialisation du jeu de pendu pour le round actuel
             self.current_hangman = Hangman(list(self.players.values()), self.no_tries)
-            for player in self.players:
-                Hangman.add_player(player)
+
+            #appel redondant avec l'init de Hangman qui fait déja ça
+            #for player in self.players.values():
+                #self.current_hangman.add_player(player.token)
+
             
             # la room change de status et on enclenche le cooldown inter round
             self.room_status = RoomStatus.ROUND_COOLDOWN
             
             # le round est fini on met à jour les scores et on change de round
-            self.update_scores()
+            #self.update_scores()
             self.current_round = self.current_round + 1
 
-            self.notify_users() # on prévient les utilisateurs que le cooldown vient de se lancer
-            self.current_cooldown = self.round_cooldown
+            self.notify_players() # on prévient les utilisateurs que le cooldown vient de se lancer
+            self.current_cooldown = int(self.round_cooldown)
             while not self.current_cooldown == 0:
                 time.sleep(1)
                 self.current_cooldown -= 1
 
             # la room change de status et on enclenche le timer du round
             self.room_status = RoomStatus.ROUND_ONGOING
-            self.notify_users() # on prévient les utilisateurs que le round vient de commencer
+            self.notify_players() # on prévient les utilisateurs que le round vient de commencer
             self.current_duration = self.round_duration
             while not self.current_duration == 0:
                 time.sleep(1)
                 self.current_duration -= 1
 
         self.room_status = RoomStatus.GAME_ENDED
-        self.notify_users() # on prévient les utilisateurs que la partie est terminée
+        self.notify_players() # on prévient les utilisateurs que la partie est terminée
         self.game_end()
 
     def notify_players(self):
-        for player in self.players:
-            if(not player.conn == None):
+        for player in self.players.values():  # Parcourir les objets joueurs, pas les clés
+            if player.conn is not None:  # Vérifiez que conn n'est pas None
                 message = {
-                    "type" : "status_change",
-                    "data" : {
-                        "status" : self.room_status
+                    "type": "status_change",
+                    "data": {
+                        "status": self.room_status.name
                     }
                 }
 
-                player.conn.sendall((json.dumps(message) + "\n").encode())
+                try:
+                    player.conn.sendall((json.dumps(message) + "\n").encode())
+                except Exception as e:
+                    print(f"Erreur lors de l'envoi d'un message au joueur {player.token}: {e}")
+
 
     def game_end(self):
         RoomsCollection.get_instance().delete_room(self.room_id)
