@@ -234,7 +234,7 @@ class Room():
                 is_empty = False
                 break
 
-        if(self.room_status == RoomStatus.WAITING and is_empty):
+        if(self.room_status != RoomStatus.WAITING and is_empty):
             RoomsCollection.get_instance().delete_room(self.room_id)
 
 
