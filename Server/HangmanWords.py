@@ -1,6 +1,16 @@
 import random
 
+#liste courte
 words = [
+    "arbre",
+    "python",
+    "appartement",
+    "rouge"
+]
+
+
+#longue liste
+'''words = [
     "arbre", "buisson", "feuille", "branche", "tronc", "racine", "herbe", "fleur", "rose", "tulipe",
     "lys", "marguerite", "chene", "sapin", "pin", "foret", "jungle", "savane", "plage", "ocean",
     "mer", "riviere", "lac", "cascade", "source", "rocher", "montagne", "colline", "falaise", "cratere",
@@ -37,7 +47,7 @@ words = [
     "agriculteur", "eleveur", "veterinaire", "boulanger", "boucher", "poissonnier", "pharmacien", "chimiste", "scientifique", "chercheur",
     "informaticien", "analyste", "consultant", "technicien", "mecanicien", "chauffeur", "plombier", "electricien", "menuisier", "ouvrier",
     "commercial", "vendeur", "banquier", "assureur", "courtier", "comptable", "gestionnaire", "directeur", "entrepreneur", "chef"
-]
+]'''
 
 
 def get_random_word():

@@ -63,12 +63,24 @@ class GuessLetterQuery(HangmanQueryHandler):
 
         result = room.current_hangman.guess_letter(token, guess)
 
-        if result == -1:
-            utils.send_message_to(sock, client_address, "error", "Vous n'avez plus d'essais restants")
-        elif result == 1:
-            utils.send_message_to(sock, client_address, "success", "Félicitations, vous avez gagné !")
-        else:
-            utils.send_message_to(sock, client_address, "success", "Lettre reçu par le serveur")
+        response = {
+            "type": "guessletterres",
+            "data": {
+                "letter": guess,
+                "result": result,  # -1: Pas d'essais, 0: Incorrect, 1: Lettre correct 2: Mot complété
+                "word": room.current_hangman.get_player_gamestate(token)["word"],
+                "tries_left": room.current_hangman.get_player_gamestate(token)["nb_tries_left"]
+            }
+        }
+        try:
+            json_message = json.dumps(response) + "\n"
+            print(f"DEBUG: Message envoyé : {json_message.strip()}")
+            user.conn.sendall(json_message.encode())
+        except Exception as e:
+            print(f"Erreur lors de l'envoi au joueur {user.token}: {e}")
+
+        utils.send_message_to(sock, client_address, "success", response)
+        user.conn.sendall(json_message.encode())
 
 
 # Maillon pour récupérer l'état du jeu

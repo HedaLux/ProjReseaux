@@ -14,23 +14,33 @@ class Hangman():
             }
 
     def guess_letter(self, player_token, guess):
-        if(not self.__check_player_existence(player_token)):
-            raise Exception(f"le joueur [{player_token}] n'as pas de gamestate")
+
+        if not self.__check_player_existence(player_token):
+            raise Exception(f"Le joueur [{player_token}] n'a pas de gamestate")
         
+
         if self.players_state[player_token]["nb_tries_left"] == 0:
-            return -1
-        
+            return -1  # Pas d'essais restants
+
+        # Si la lettre est correcte
         if guess in self.word:
+
+            current_word = list(self.players_state[player_token]['word'])
             for index, letter in enumerate(self.word):
                 if letter == guess:
-                    self.players_state[player_token]['word'][index] = guess
-            
-            if self.players_state[player_token]['word'] == self.word:
-                return 1
-        else:
-            self.players_state[player_token]['nb_tries_left'] -= 1
+                    current_word[index] = guess
+            self.players_state[player_token]['word'] = ''.join(current_word)
 
-        return 0
+ 
+            if self.players_state[player_token]['word'] == self.word:
+                return 2  # Mot complété
+            return 1  # Lettre correcte mais mot incomplet
+        else:
+
+            self.players_state[player_token]['nb_tries_left'] -= 1
+            return 0  # Lettre incorrecte
+
+
 
     def add_player(self, player_token):
         if(self.__check_player_existence):

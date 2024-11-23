@@ -41,11 +41,20 @@ class UserLeftRoom(QueryHandler):
 
 
 # Maillon quand le serveur envoi la réponse à un guess
-class GuessWordRes(QueryHandler):
+class GuessLetterResponse(QueryHandler):
     def handle(self, query):
-        if(query["type"] != "guesswordres"):
+        if query["type"] != "guessletterres":
             self._try_next(query)
             return
+
+        letter = query["data"]["letter"]
+        result = query["data"]["result"]
+        word = query["data"]["word"]
+        tries_left = query["data"]["tries_left"]
+
+        # Appeler la fonction côté UI pour mettre à jour l'affichage
+        eel.guessResult(letter, result == 1, word, tries_left)
+
 
 
 # Maillon lorsqu'on recoit un message
@@ -126,7 +135,7 @@ class CORServerQueriesWrapper():
     def __init__(self):
         self.__head = UserJoinedRoom()
         self.__head = UserLeftRoom(self.__head)
-        self.__head = GuessWordRes(self.__head)
+        self.__head = GuessLetterResponse(self.__head)
         self.__head = MessageReceived(self.__head)
         self.__head = RoomStateChange(self.__head)
         self.__head = RoomInfo(self.__head)
