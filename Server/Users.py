@@ -207,6 +207,7 @@ class User():
         self.username = username
         self.token = token
         self.status = Status.INMENU
+        self.last_game_id = None
 
     def start_connection(self):
         conn, addr = UsersCollection.get_instance().__socket_room_browser.accept()

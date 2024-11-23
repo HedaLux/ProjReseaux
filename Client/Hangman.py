@@ -77,9 +77,12 @@ def leave_room():
         Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
         Utils.HANGMAN_SERVER_MESSAGE_HANDLER_THREAD_EVENT.set()
         print("Requête de sortie de salle envoyée.")
+        return 1
 
     except Exception as e:
         print(f"Erreur lors de la sortie de la salle : {str(e)}")
+    
+    return 0
 
 @eel.expose
 def request_game_state():

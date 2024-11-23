@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 import eel
+import Utils
 
 # Exception si aucun maillon ne peut traiter la requête
 class NoHandlerException(Exception):
@@ -118,7 +119,7 @@ class RoomInfo(QueryHandler):
         player_list = query["data"]["player_list"]
         
         
-        self.set_room_info(round_count, round_duration, round_cooldown, notries, room_owner, player_list)
+        self.set_room_info(Utils.USERNAME, round_count, round_duration, round_cooldown, notries, room_owner, player_list)
 
         if(round_status == "ROUND_ONGOING"):
             pass
@@ -146,8 +147,8 @@ class RoomInfo(QueryHandler):
             eel.gameEnd()
         """
 
-    def set_room_info(self, round_count, round_duration, round_cooldown, notries, room_owner, player_list):
-        eel.setRoomInfo(round_count, round_duration, round_cooldown, notries, room_owner, player_list)
+    def set_room_info(self, username, round_count, round_duration, round_cooldown, notries, room_owner, player_list):
+        eel.setRoomInfo(username, round_count, round_duration, round_cooldown, notries, room_owner, player_list)
         
 class UpdatePlayerListQuery(QueryHandler):
     def handle(self, query):

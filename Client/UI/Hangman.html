@@ -12,7 +12,7 @@
                 <div id="modal-game-wrapper" class="">
                     <div id="round-starting-message" class="hidden">Le round <span id="modal-round-number"></span> va commencer dans : <span id="cooldown-timer"></span></div>
                     <div id="game-waiting-message" class="">En attente de lancement</div>
-                    <button id="start-game" class="">lancer la partie</button>
+                    <button id="start-game" class="hidden">lancer la partie</button>
                 </div>
                 <div class="left-bar">
                     <div class="timer">
@@ -337,12 +337,17 @@
     })
 
     eel.expose(setRoomInfo)
-    function setRoomInfo(round_count, round_duration, round_cooldown, _notries, room_owner, player_list) {
+    function setRoomInfo(your_username, round_count, round_duration, round_cooldown, _notries, room_owner, player_list) {
         lastRound.innerHTML = round_count
         currentRound.innerHTML = 1
         roomCooldownDuration = round_cooldown
         roomRoundDuration = round_duration
         notries = _notries
+
+        if(your_username == room_owner) {
+            if(startGameButton.classList.contains("hidden"))
+                startGameButton.classList.remove("hidden")
+        }
 
         player_list.forEach(player => {
             const newElement = document.createElement("div");
@@ -355,6 +360,13 @@
             playerList.appendChild(newElement)
         })
     }
+
+    leaveButton.addEventListener("click", e => {
+        eel.leave_room()().then(res => {
+            console.log(res)
+            window.location.href = "RoomBrowser.html";
+        })
+    })
 
     eel.start_message_handling_thread()
     eel.request_game_state()

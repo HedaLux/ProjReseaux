@@ -183,6 +183,9 @@ class Room():
             except Exception as e:
                 print(f"Erreur lors de l'envoi au joueur {player.token}: {e}")
 
+    def playerLeaveRoom(player):
+        pass
+
     def remove_player(self, player_token):
         if player_token in self.players:
             del self.players[player_token]
@@ -229,7 +232,7 @@ class RoomsCollection():
     def delete_room(self, room_id):
         if(room_id not in self.rooms):
             raise Exception(f"la room [{room_id}] n'existe pas")
-        self.rooms.popitem(room_id)
+        self.rooms.pop(room_id)
 
     def get_room(self, room_id):
         if(room_id not in self.rooms):

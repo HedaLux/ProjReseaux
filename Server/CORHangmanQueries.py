@@ -55,10 +55,13 @@ class GuessLetterQuery(HangmanQueryHandler):
             utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
-        from Room import RoomsCollection
+        from Room import RoomsCollection, RoomStatus
         room = RoomsCollection.get_instance().get_room_by_user(token)
         if room is None or not isinstance(room.current_hangman, Hangman):
             utils.send_message_to(sock, client_address, "error", "Aucune partie en cours dans cette salle")
+            return
+
+        if(not room.room_status == RoomStatus.ROUND_ONGOING):
             return
 
         result = room.current_hangman.guess_letter(token, guess)
