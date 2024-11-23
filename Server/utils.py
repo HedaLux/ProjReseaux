@@ -9,7 +9,9 @@ class Status(Enum):
 def send_message_to(sock, client_address, type, message):
     messageJson = {"response": type, "message" : message}
 
-    message = json.dumps(messageJson)
+    #message = json.dumps(messageJson)
+    message = json.dumps(messageJson) + "\n"
+
 
     try:
         sock.sendto(message.encode(), client_address)

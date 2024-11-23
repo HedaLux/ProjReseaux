@@ -99,17 +99,20 @@ class Room():
             while not self.current_cooldown == 0:
                 time.sleep(1)
                 self.current_cooldown -= 1
+                print(f"timer of the cooldown : {self.current_cooldown}")
 
             # la room change de status et on enclenche le timer du round
-            self.room_status = RoomStatus.ROUND_ONGOING
+            self.room_status = RoomStatus.ROUND_ONGOING   
             self.notify_players() # on prévient les utilisateurs que le round vient de commencer
-            self.current_duration = self.round_duration
+            self.current_duration = int(self.round_duration)
             while not self.current_duration == 0:
                 time.sleep(1)
                 self.current_duration -= 1
+                print(f"timer of the room : {self.current_duration}")
 
         self.room_status = RoomStatus.GAME_ENDED
         self.notify_players() # on prévient les utilisateurs que la partie est terminée
+        print("zoulou\n\n")
         self.game_end()
 
     def notify_players(self):

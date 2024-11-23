@@ -84,6 +84,15 @@ class UpdatePlayerListQuery(QueryHandler):
         print("caba")
         eel.update_player_list(players)  # Fonction exposée côté JS pour mettre à jour l'interface
 
+# Maillon pour valider les requêtes avant traitement
+class ValidateQuery(QueryHandler):
+    def handle(self, query):
+        if "type" not in query:
+            print(f"Message reçu ignoré par CORServerQueries : {query}")
+            return  # Ignore le message
+        self._try_next(query)
+
+
         
 
 # Classe singleton qui permet de construire une seule fois la chaine de responsabilité
@@ -109,6 +118,7 @@ class CORServerQueriesWrapper():
         self.__head = RoomStateChange(self.__head)
         self.__head = RoomInfo(self.__head)
         self.__head = UpdatePlayerListQuery(self.__head)
+        self.__head = ValidateQuery(self.__head)
         print("COR ServerQueries initi \n")
 
     def __new__(cls, *args, **kwargs):
