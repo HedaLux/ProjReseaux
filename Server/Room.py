@@ -78,9 +78,9 @@ class Room():
         thread_game_handler.start()
 
     def game_handler(self):
-        while(self.current_round <= self.round_count):
+        while(self.current_round <= int(self.round_count)):
             # initialisation du jeu de pendu pour le round actuel
-            self.current_hangman = Hangman()
+            self.current_hangman = Hangman(list(self.players.values()), self.no_tries)
             for player in self.players:
                 Hangman.add_player(player)
             

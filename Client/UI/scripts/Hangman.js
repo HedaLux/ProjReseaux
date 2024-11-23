@@ -99,8 +99,3 @@ function update_player_list(players) {
     console.log("Liste des joueurs mise à jour :", players);
 }
 
-document.getElementById("start-game").addEventListener("click", () => {
-    eel.start_game()  
-        .then(() => console.log("Partie lancée via start_game"))
-        .catch(err => console.error("Erreur lors du lancement de la partie :", err));
-});
