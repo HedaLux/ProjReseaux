@@ -91,6 +91,9 @@ button:active {
 }
 
 .game-wrapper .left-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
     width: fit-content;
     height: 100%;
     display: flex;
@@ -139,6 +142,7 @@ button:active {
     justify-content: center;
     gap: 10px;
     width: 50%;
+    min-width: 400px;
 }
 
 .game-wrapper .keyboard > * {
@@ -175,6 +179,7 @@ button:active {
 
 .room-info {
     max-width: 30%;
+    min-width: 200px;
     height: calc(100% - 40px);
     box-sizing: padding-box;
     display: flex;
