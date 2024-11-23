@@ -29,8 +29,8 @@
     "Bob": {
         "password": "b064b37c2ee4bba3a5a9b8a7e8bf8ec01659b6a2798fd4d9ea1368d814bdaa1b",
         "stats": {
-            "multiplayer_games_played": 60,
-            "multiplayer_wins": 12,
+            "multiplayer_games_played": 66,
+            "multiplayer_wins": 15,
             "solo_games_played": 8,
             "solo_wins": 6
         }
