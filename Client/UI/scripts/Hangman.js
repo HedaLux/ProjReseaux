@@ -99,3 +99,11 @@ function update_player_list(players) {
     console.log("Liste des joueurs mise à jour :", players);
 }*/
 
+// Gestion de l'envoi de messages dans le chat via la touche "Entrée"
+sendMessage.addEventListener("keyup", (event) => {
+    if (event.key === "Enter" && sendMessage.value.trim() !== "") {
+        const message = sendMessage.value.trim();
+        eel.send_chat_message(message); // Fonction exposée Python
+        sendMessage.value = ""; // Réinitialise le champ de saisie
+    }
+});

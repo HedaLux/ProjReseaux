@@ -237,6 +237,23 @@ class Room():
         if(self.room_status != RoomStatus.WAITING and is_empty):
             RoomsCollection.get_instance().delete_room(self.room_id)
 
+    def broadcast_chat_message(self, sender, message):
+
+        chat_message = {
+            "type": "chat_message",
+            "data": {
+                "sender": sender,
+                "message": message
+            }
+        }
+        for player in self.players.values():
+            if player.conn is not None:
+                try:
+                    player.conn.sendall((json.dumps(chat_message) + "\n").encode())
+                except Exception as e:
+                    print(f"Erreur lors de l'envoi du message de chat à {player.username}: {e}")
+
+
 
 """
 CONTENEUR DES ROOMS : classe singleton

@@ -67,11 +67,18 @@ class GuessLetterResponse(QueryHandler):
 
 
 # Maillon lorsqu'on recoit un message
-class MessageReceived(QueryHandler):
+class ChatMessageReceived(QueryHandler):
     def handle(self, query):
-        if(query["type"] != "messagerecv"):
+        if query["type"] != "chat_message":
             self._try_next(query)
             return
+
+        sender = query["data"]["sender"]
+        message = query["data"]["message"]
+
+        # Appelle la fonction existante dans JavaScript pour afficher le message
+        eel.addMessageToTchat(message, sender)
+
 
 
 # Maillon quand la salle change de status
@@ -161,6 +168,8 @@ class UpdatePlayerListQuery(QueryHandler):
         print("caba")
         eel.update_player_list(players)  # Fonction exposée côté JS pour mettre à jour l'interface
 
+
+
 # Maillon pour valider les requêtes avant traitement
 class ValidateQuery(QueryHandler):
     def handle(self, query):
@@ -191,7 +200,7 @@ class CORServerQueriesWrapper():
         self.__head = UserJoinedRoom()
         self.__head = UserLeftRoom(self.__head)
         self.__head = GuessLetterResponse(self.__head)
-        self.__head = MessageReceived(self.__head)
+        self.__head = ChatMessageReceived(self.__head)
         self.__head = RoomStateChange(self.__head)
         self.__head = RoomInfo(self.__head)
         self.__head = UpdatePlayerListQuery(self.__head)

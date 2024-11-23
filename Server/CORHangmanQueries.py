@@ -179,32 +179,19 @@ class ChatMessageQuery(HangmanQueryHandler):
 
         from Users import UsersCollection
         user = UsersCollection.get_instance().get_connected_user(token)
-
         if user is None:
-            utils.send_message_to(sock, client_address, "error", "Utilisateur non connecte ou token invalide")
+            utils.send_message_to(sock, client_address, "error", "Utilisateur non connecté ou token invalide")
             return
 
         from Room import RoomsCollection
-        room = RoomsCollection.get_instance().get_room_by_user(user.username)
-
+        room = RoomsCollection.get_instance().get_room_by_user(token)
         if room is None:
-            utils.send_message_to(sock, client_address, "error", "L'utilisateur n'est pas dans une salle, message impossible")
+            utils.send_message_to(sock, client_address, "error", "Salle introuvable")
             return
 
-        # Diffuser le message à tous les joueurs de la salle (voir la mécanique du chat)
-        for player in room.players:
-            try:
-                player_sock = UsersCollection.get_instance().get_connected_user_socket(player)
-                chat_data = {
-                    "type": "receivechatmessage",
-                    "data": {
-                        "sender": user.username,
-                        "message": message
-                    }
-                }
-                utils.send_message_to(player_sock, None, "success", chat_data)
-            except Exception as e:
-                print(f"Erreur lors de l'envoi du message à {player}: {str(e)}")
+        room.broadcast_chat_message(user.username, message)
+        utils.send_message_to(sock, client_address, "success", "Message envoyé")
+
 
 
 # Maillon pour commencer la partie
