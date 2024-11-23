@@ -47,7 +47,6 @@ class Room():
             players_copy = list(self.players.values())
             time.sleep(0.1)
             for player in players_copy:
-                print(f"last id {player.last_game_id} || id de la room {self.room_id}")
                 if(not player.status == utils.Status.INGAME):
                     continue
                 if(player.last_game_id != self.room_id):

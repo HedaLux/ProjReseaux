@@ -46,7 +46,7 @@ class UserLeftRoom(QueryHandler):
         
         username = query["data"]["username"]
 
-        eel.userJoined(username)
+        eel.userLeft(username)
 
 
 # Maillon quand le serveur envoi la réponse à un guess

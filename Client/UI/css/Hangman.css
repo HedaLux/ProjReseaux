@@ -230,7 +230,7 @@ button:active {
 }
 
 #player-list .player.disconnected {
-    color: red;
+    text-decoration: line-through;
 }
 
 #tchat .message > .playername {
