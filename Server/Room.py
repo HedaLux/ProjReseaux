@@ -217,10 +217,23 @@ class Room():
         from Users import Status
         player.status = Status.INMENU
 
+        query = {
+            "type": "userleft",
+            "data": {
+                "username": player.username
+            }
+        }
+
+        for p in self.players.values():
+            print(f"p = {p} et player = {player}")
+            if p != player:
+                p.conn.sendall((json.dumps(query) + "\n").encode())
+
         is_empty = True
-        for p in self.players.value():
-            if(p.last_game_id == self.room_id):
+        for p in self.players.values():
+            if(p.status == Status.INGAME and p.last_game_id == self.room_id):
                 is_empty = False
+                break
 
         if(self.room_status == RoomStatus.WAITING and is_empty):
             RoomsCollection.get_instance().delete_room(self.room_id)

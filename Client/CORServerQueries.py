@@ -40,7 +40,7 @@ class UserJoinedRoom(QueryHandler):
 # Maillon quand un joueur quitte la salle
 class UserLeftRoom(QueryHandler):
     def handle(self, query):
-        if(query["type"] != "userleave"):
+        if(query["type"] != "userleft"):
             self._try_next(query)
             return
         
