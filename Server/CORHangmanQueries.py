@@ -172,33 +172,36 @@ class StartGameQuery(HangmanQueryHandler):
             self._try_next(sock, query, client_address)
             return
 
+        print("wazaza\n")
         token = query["data"].get("token")
-        room_id = query["data"].get("room-id")
 
-        if not token or not room_id:
+
+        if not token:
             utils.send_message_to(sock, client_address, "error", "Token ou ID de salle manquant")
+            print("wazaza1.5\n")
             return
-
+        print("wazaza2\n")
         from Room import RoomsCollection
 
         # Récupération de la salle
-        room = RoomsCollection.get_instance().get_room(room_id)
+        room = RoomsCollection.get_instance().get_room_by_user(token)
         if not room:
             utils.send_message_to(sock, client_address, "error", f"Salle avec ID {room_id} introuvable")
             return
-
+        print("wazaza3\n")
         # Vérification que le joueur est bien le propriétaire
         player = room.players.get(token)
         if not player:
             utils.send_message_to(sock, client_address, "error", f"Joueur avec token {token} non trouvé dans la salle")
             return
-
+        print("wazaza4\n")
         if player != room.room_owner:
             utils.send_message_to(sock, client_address, "error", "Seul le propriétaire de la salle peut démarrer la partie")
             return
-
+        print("wazaza5\n")
         # Démarrage de la partie
         try:
+            print("room.start_game(player)")
             room.start_game(player)
             utils.send_message_to(sock, client_address, "success", "La partie a commencé")
         except Exception as e:

@@ -137,6 +137,6 @@ def start_game():
         }
 
         Utils.TCP_SOCK.sendall((json.dumps(query) + "\n").encode())
-        print("Requête pour démarrer la partie envoyée.")
+        print("Hangman.py: Requête pour démarrer la partie envoyée.")
     except Exception as e:
         print(f"Erreur lors de l'envoi de la requête pour démarrer la partie : {str(e)}")
