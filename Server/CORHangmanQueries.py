@@ -165,7 +165,7 @@ class LeaveRoomQuery(HangmanQueryHandler):
             return
 
         room.player_leave_room(user)
-        utils.send_message_to(sock, client_address, "success", "Vous avez quitté la salle")
+        #utils.send_message_to(sock, client_address, "success", "Vous avez quitté la salle")
 
 
 class ChatMessageQuery(HangmanQueryHandler):
@@ -190,7 +190,7 @@ class ChatMessageQuery(HangmanQueryHandler):
             return
 
         room.broadcast_chat_message(user.username, message)
-        utils.send_message_to(sock, client_address, "success", "Message envoyé")
+        #utils.send_message_to(sock, client_address, "success", "Message envoyé")
 
 
 
