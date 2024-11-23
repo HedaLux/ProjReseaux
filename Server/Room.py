@@ -108,11 +108,13 @@ class Room():
 
             # le round est fini on met à jour les scores et on change de round
             #self.update_scores()
+            self.update_player_stats()
             self.current_round = self.current_round + 1
 
         self.room_status = RoomStatus.GAME_ENDED
-        self.notify_players() # on prévient les utilisateurs que la partie est terminée
-        print("zoulou\n\n")
+         # Mise à jour des statistiques
+        # on prévient les utilisateurs que la partie est terminée
+        self.notify_players() 
         self.game_end()
 
     def notify_players(self):
@@ -134,6 +136,40 @@ class Room():
                     player.conn.sendall(json_message.encode())
                 except Exception as e:
                     print(f"Erreur lors de l'envoi au joueur {player.token}: {e}")
+
+    def update_player_stats(self):
+        """
+        Met à jour les statistiques des joueurs dans la salle à la fin de la partie.
+        """
+        from JSONDBFunctions import load_users, save_users 
+
+        # Charger les données utilisateur
+        users = load_users()
+
+        for player in self.players.values():
+            username = player.username
+            
+            if username not in users:
+                print(f"Utilisateur {username} introuvable dans la base de données.")
+                continue
+
+            # Mise à jour des parties jouées
+            if self.room_owner.token == player.token:
+                mode = "multiplayer"  # Pour cette salle, c'est forcément multijoueur
+            else:
+                mode = "solo"
+
+            users[username]["stats"][f"{mode}_games_played"] += 1
+
+            # Vérifier si le joueur a gagné
+            player_state = self.current_hangman.get_player_gamestate(player.token)
+            if player_state and player_state["word"] == self.current_hangman.word:
+                users[username]["stats"][f"{mode}_wins"] += 1
+
+        # Sauvegarder les modifications
+        save_users(users)
+        print("Statistiques mises à jour pour tous les joueurs.")
+
 
 
     '''    def notify_players(self):

@@ -198,6 +198,44 @@ class UsersCollection:
         if token in self.__disconnected_users:
             return True
         return False
+    
+    def update_stats(self, username, mode, word_guessed, filename="users.json"):
+        """
+        Met à jour les statistiques d'un utilisateur.
+
+        :param username: Nom d'utilisateur.
+        :param mode: "solo" ou "multiplayer".
+        :param word_guessed: Booléen indiquant si le mot a été trouvé.
+        :param filename: Nom du fichier JSON où les données utilisateur sont stockées.
+        """
+        if username not in self.users:
+            print(f"Utilisateur {username} introuvable.")
+            return
+
+        user_data = self.users[username]
+
+        # Met à jour les statistiques en fonction du mode
+        if mode == "solo":
+            user_data["stats"]["solo_games_played"] += 1
+            if word_guessed:
+                user_data["stats"]["solo_wins"] += 1
+        elif mode == "multiplayer":
+            user_data["stats"]["multiplayer_games_played"] += 1
+            if word_guessed:
+                user_data["stats"]["multiplayer_wins"] += 1
+        else:
+            print(f"Mode de jeu invalide : {mode}")
+            return
+
+        # Sauvegarde des données mises à jour dans le fichier JSON
+        try:
+            write_json(filename, self.users)
+            print(f"Statistiques de l'utilisateur {username} mises à jour avec succès.")
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde des statistiques : {e}")
+
+
+
 
 class User():
 

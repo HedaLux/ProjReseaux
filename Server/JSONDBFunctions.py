@@ -14,6 +14,16 @@ def write_json(filename, data):
     with open(filename, 'w+', encoding='UTF-8') as file:
         json.dump(data, file, indent=4)
 
+def load_users(filepath='users.json'):
+    try:
+        with open(filepath, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+def save_users(users, filepath='users.json'):
+    with open(filepath, 'w', encoding='utf-8') as file:
+        json.dump(users, file, indent=4)
 
 def check_user_credentials(username, password):
     global DB_FILENAME
