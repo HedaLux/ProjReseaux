@@ -6,14 +6,11 @@ import Utils
 def disconnect_user():
 
     try:
-        with open("token.json", "r") as token_file:
-            token_data = json.load(token_file)
-            token = token_data["token"]
 
         query = {
             "type": "disconnect",
             "data": {
-                "token": token
+                "token": Utils.TOKEN
             }
         }
 
@@ -41,14 +38,11 @@ def disconnect_user():
 def get_user_stats_ui():
 
     try:
-        with open("token.json", "r") as token_file:
-            token_data = json.load(token_file)
-            token = token_data["token"]
 
         query = {
             "type": "getuserstats",
             "data": {
-                "token": token
+                "token": Utils.TOKEN
             }
         }
 
@@ -74,14 +68,11 @@ def get_user_stats_ui():
 def create_room(room_data):
 
     try:
-        with open("token.json", "r") as token_file:
-            token_data = json.load(token_file)
-            token = token_data["token"]
 
         query = {
             "type": "createroom",
             "data": {
-                "token": token,
+                "token": Utils.TOKEN,
                 "room": room_data
             }
         }
@@ -102,15 +93,12 @@ def create_room(room_data):
 def get_rooms():
 
     try:
-        with open("token.json", "r") as token_file:
-            token_data = json.load(token_file)
-            token = token_data["token"]
 
         # Construire la requête pour récupérer les salles
         query = {
             "type": "getrooms",
             "data": {
-                "token": token
+                "token": Utils.TOKEN
             }
         }
 
@@ -129,14 +117,11 @@ def get_rooms():
 @eel.expose
 def join_room(room_id):
     try:
-        with open("token.json", "r") as token_file:
-            token_data = json.load(token_file)
-            token = token_data["token"]
 
         query = {
             "type": "joinroom",
             "data": {
-                "token": token,
+                "token": Utils.TOKEN,
                 "room_id": room_id
             }
         }

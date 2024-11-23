@@ -39,7 +39,7 @@ def connect_to_server(username, password, server_address, server_port):
             # Sauvegarde du token utilisateur et mise à jour de l'utilisateur courant
             Utils.save_token(response["message"]["token"], server_address, server_port)
             current_user = username
-
+            save_credentials(username, response["message"]["token"])
             return response
         else:
             # En cas d'erreur dans la réponse
@@ -77,10 +77,14 @@ def register_on_server(username, password, password_confirm, server_address, ser
             Utils.TCP_SOCK = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print(response)
             Utils.TCP_SOCK.connect((server_address, response["message"]["port"]))
-            current_user = username
+            save_credentials(username, response["message"]["token"])
             print(f"Utilisateur {username} inscrit et connecté en TCP.")
             return {"response": "success", "message": f"Utilisateur {username} inscrit et connecté."}
         else:
             return {"response": "error", "message": response.get("message", "Erreur inconnue")}
     except Exception as e:
         return {"response": "error", "message": str(e)}
+    
+def save_credentials(username, token):
+    Utils.USERNAME = username
+    Utils.TOKEN = token
