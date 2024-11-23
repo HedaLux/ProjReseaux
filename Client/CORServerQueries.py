@@ -68,11 +68,12 @@ class RoomStateChange(QueryHandler):
         # Appeler les fonctions UI correspondantes via Eel
         # Faire en sorte que le message amene la data voulue
         if query['data']['status'] == 'ROUND_COOLDOWN':
-            eel.roundCooldown(query['data'].get("round_number", 1))
+            eel.roundCooldown(query['data'].get("round_number", 1), query["data"].get("room_cooldown", 0))
         elif query['data']['status'] == 'ROUND_ONGOING':
             eel.roundStart(
                 query['data'].get("round_number", 1),
-                query['data'].get("word", "_ _ _ _")
+                query['data'].get("word", "_ _ _ _"),
+                query["data"].get("room_round_duration", 0)
             )
         elif query['data']['status'] == 'GAME_ENDED':
             eel.gameEnd()

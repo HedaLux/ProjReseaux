@@ -209,7 +209,7 @@
     function updateScores() {}
 
     eel.expose(roundCooldown)
-    function roundCooldown(nextRound) {
+    function roundCooldown(nextRound, roomCD) {
         updateScores()
 
         resetKeyboard()
@@ -236,11 +236,11 @@
             gameWaitingMessage.classList.add("hidden")
         }
 
-        startCooldownTimer(roomCooldownDuration)
+        startCooldownTimer(roomCD)
     }
 
     eel.expose(roundStart)
-    function roundStart(roundNumber, word) {
+    function roundStart(roundNumber, word, roomRD) {
         if(!modalGameWrapper.classList.contains("hidden")) {
             modalGameWrapper.classList.add("hidden")
         }
@@ -248,7 +248,7 @@
         currentRound.innerHTML = roundNumber
         wordState.innerHTML = word
 
-        startTimer(roomRoundDuration)
+        startTimer(roomRD)
     }
 
     eel.expose(gameEnd)

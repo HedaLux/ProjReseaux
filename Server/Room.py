@@ -89,10 +89,6 @@ class Room():
             
             # la room change de status et on enclenche le cooldown inter round
             self.room_status = RoomStatus.ROUND_COOLDOWN
-            
-            # le round est fini on met à jour les scores et on change de round
-            #self.update_scores()
-            self.current_round = self.current_round + 1
 
             self.notify_players() # on prévient les utilisateurs que le cooldown vient de se lancer
             self.current_cooldown = int(self.round_cooldown)
@@ -110,6 +106,10 @@ class Room():
                 self.current_duration -= 1
                 print(f"timer of the room : {self.current_duration}")
 
+            # le round est fini on met à jour les scores et on change de round
+            #self.update_scores()
+            self.current_round = self.current_round + 1
+
         self.room_status = RoomStatus.GAME_ENDED
         self.notify_players() # on prévient les utilisateurs que la partie est terminée
         print("zoulou\n\n")
@@ -126,6 +126,8 @@ class Room():
                         "round_number": self.current_round,
                         "word": self.current_hangman.get_player_gamestate(player.token).get('word', '????'),
                         "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0),
+                        "room_cooldown": self.round_cooldown, 
+                        "room_round_duration": self.round_duration
                     }
                 }
                 try:
