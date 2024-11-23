@@ -149,7 +149,8 @@
         let found = false
 
         Array.from(players).forEach((player) => {
-            if(player.innerHTML == username) {
+            console.log(player.innerHTML == username)
+            if(player.innerHTML.trim() == username) {
                 if(player.classList.contains("disconnected")) {
                     player.classList.remove("disconnected")
                 }
@@ -174,7 +175,7 @@
         const players = playerList.getElementsByClassName("player")
 
         Array.from(players).forEach((player) => {
-            if(player.innerHTML == username) {
+            if(player.innerHTML.trim() == username) {
                 if(!player.classList.contains("disconnected")) {
                     player.classList.add("disconnected")
                 }
