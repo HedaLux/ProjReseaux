@@ -238,13 +238,13 @@ class StartGameQuery(HangmanQueryHandler):
             return
 
         # Démarrage de la partie
-        try:
-            print("room.start_game(player)")
-            room.start_game(player)
-            room.sendAllStartGame()
-            utils.send_message_to(sock, client_address, "success", "La partie a commencé")
-        except Exception as e:
-            utils.send_message_to(sock, client_address, "error", f"Erreur lors du démarrage de la partie : {str(e)}")
+        #try:
+        print("room.start_game(player)")
+        room.start_game(player)
+        #room.sendAllStartGame()
+        #utils.send_message_to(sock, client_address, "success", "La partie a commencé")
+        #except Exception as e:
+        #    utils.send_message_to(sock, client_address, "error", f"Erreur lors du démarrage de la partie : {str(e)}")
 
 # Classe singleton pour construire la chaîne de responsabilité
 class CORHangmanQueriesWrapper:

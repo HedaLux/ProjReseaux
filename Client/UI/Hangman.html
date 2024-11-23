@@ -300,7 +300,7 @@
 
         currentRound.innerHTML = roundNumber
         wordState.innerHTML = word
-        triesLeft.innerHTML = triesLeft
+        triesLeft.innerHTML = notries
 
         startTimer(roomRoundDuration)
     }
@@ -337,11 +337,12 @@
     })
 
     eel.expose(setRoomInfo)
-    function setRoomInfo(round_count, round_duration, round_cooldown, notries, room_owner, player_list) {
+    function setRoomInfo(round_count, round_duration, round_cooldown, _notries, room_owner, player_list) {
         lastRound.innerHTML = round_count
         currentRound.innerHTML = 1
         roomCooldownDuration = round_cooldown
         roomRoundDuration = round_duration
+        notries = _notries
 
         player_list.forEach(player => {
             const newElement = document.createElement("div");
