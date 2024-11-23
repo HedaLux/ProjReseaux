@@ -116,6 +116,27 @@ class Room():
         self.game_end()
 
     def notify_players(self):
+        for player in self.players.values():
+            if player.conn is not None:
+
+                message = {
+                    "type": "status_change",
+                    "data": {
+                        "status": self.room_status.name,
+                        "round_number": self.current_round,
+                        "word": self.current_hangman.get_player_gamestate(player.token).get('word', '????'),
+                        "tries_left": self.current_hangman.get_player_gamestate(player.token).get('nb_tries_left', 0),
+                    }
+                }
+                try:
+                    json_message = json.dumps(message) + "\n"
+                    print(f"DEBUG: Message envoyé : {json_message.strip()}")
+                    player.conn.sendall(json_message.encode())
+                except Exception as e:
+                    print(f"Erreur lors de l'envoi au joueur {player.token}: {e}")
+
+
+    '''    def notify_players(self):
         for player in self.players.values():  # Parcourir les objets joueurs, pas les clés
             if player.conn is not None:  # Vérifiez que conn n'est pas None
                 message = {
@@ -128,7 +149,7 @@ class Room():
                 try:
                     player.conn.sendall((json.dumps(message) + "\n").encode())
                 except Exception as e:
-                    print(f"Erreur lors de l'envoi d'un message au joueur {player.token}: {e}")
+                    print(f"Erreur lors de l'envoi d'un message au joueur {player.token}: {e}")'''
 
 
     def game_end(self):
