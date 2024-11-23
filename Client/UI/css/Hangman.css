@@ -224,6 +224,10 @@ button:active {
     overflow-y: auto;
 }
 
+#player-list .player.disconnected {
+    color: red;
+}
+
 #tchat .message > .playername {
     color: chartreuse;
 }
